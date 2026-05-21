@@ -37,6 +37,7 @@ body {
     radial-gradient(circle at top left, rgba(216, 101, 45, 0.14), transparent 28%),
     radial-gradient(circle at right 20%, rgba(73, 86, 60, 0.14), transparent 24%),
     linear-gradient(180deg, #f7f1e6 0%, #f3eadb 46%, #efe4d2 100%);
+  animation: pageFade 700ms ease-out;
 }
 
 a {
@@ -65,6 +66,7 @@ img {
   backdrop-filter: blur(18px);
   background: rgba(245, 239, 227, 0.82);
   border-bottom: 1px solid rgba(25, 25, 25, 0.06);
+  animation: slideDown 560ms ease-out;
 }
 
 .nav-wrap,
@@ -237,6 +239,26 @@ img {
   flex-wrap: wrap;
 }
 
+.hero-copy > * {
+  animation: riseIn 700ms ease both;
+}
+
+.hero-copy > :nth-child(1) {
+  animation-delay: 100ms;
+}
+
+.hero-copy > :nth-child(2) {
+  animation-delay: 180ms;
+}
+
+.hero-copy > :nth-child(3) {
+  animation-delay: 260ms;
+}
+
+.hero-copy > :nth-child(4) {
+  animation-delay: 340ms;
+}
+
 .hero-panel,
 .feature-card,
 .cta-panel,
@@ -252,6 +274,8 @@ img {
 .contact-card {
   padding: 1.5rem;
   border-radius: calc(var(--radius) + 4px);
+  animation: floatIn 820ms ease both;
+  animation-delay: 220ms;
 }
 
 .hero-panel {
@@ -281,10 +305,21 @@ img {
   border-radius: 1.4rem;
   background: rgba(255, 251, 244, 0.86);
   border: 1px solid rgba(25, 25, 25, 0.08);
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease;
 }
 
 .hero-card-large {
   margin-bottom: 1rem;
+}
+
+.hero-card:hover,
+.hero-card:focus-within {
+  transform: translateY(-4px);
+  border-color: rgba(196, 55, 44, 0.24);
+  box-shadow: 0 20px 36px rgba(58, 46, 24, 0.12);
 }
 
 .card-value {
@@ -327,6 +362,21 @@ img {
   overflow: hidden;
   padding: 2rem;
   border-radius: var(--radius);
+  transition:
+    transform 240ms ease,
+    box-shadow 240ms ease,
+    border-color 240ms ease;
+}
+
+.feature-card:hover,
+.feature-card:focus-within,
+.cta-panel:hover,
+.cta-panel:focus-within,
+.contact-card:hover,
+.contact-card:focus-within {
+  transform: translateY(-6px);
+  box-shadow: 0 30px 60px rgba(58, 46, 24, 0.14);
+  border-color: rgba(196, 55, 44, 0.18);
 }
 
 .feature-card h3,
@@ -351,6 +401,8 @@ img {
   gap: 1.2rem;
   padding: 1.3rem;
   border-radius: var(--radius);
+  animation: riseIn 760ms ease both;
+  animation-delay: 180ms;
 }
 
 .stat-value {
@@ -383,6 +435,17 @@ img {
   border-radius: 1.5rem;
   background: rgba(255, 250, 242, 0.72);
   border: 1px solid var(--line);
+  transition:
+    transform 220ms ease,
+    border-color 220ms ease,
+    background-color 220ms ease;
+}
+
+.timeline li:hover,
+.timeline li:focus-within {
+  transform: translateX(6px);
+  border-color: rgba(196, 55, 44, 0.22);
+  background: rgba(255, 250, 242, 0.94);
 }
 
 .timeline span {
@@ -412,6 +475,19 @@ img {
   background: rgba(255, 250, 242, 0.84);
   border: 1px solid var(--line);
   color: var(--ink);
+  transition:
+    transform 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease;
+}
+
+.tag:hover,
+.tag:focus-visible,
+.topic-item:hover,
+.topic-item:focus-visible {
+  transform: translateY(-2px);
+  background: rgba(255, 250, 242, 0.98);
+  border-color: rgba(196, 55, 44, 0.24);
 }
 
 .cta-panel,
@@ -460,6 +536,10 @@ img {
   white-space: normal;
   text-align: center;
   line-height: 1.35;
+  transition:
+    transform 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease;
 }
 
 .site-footer {
@@ -482,6 +562,89 @@ img {
   align-items: flex-start;
   flex-direction: column;
   gap: 0.6rem;
+}
+
+.site-nav a,
+.footer-link,
+.brand,
+.contact-email {
+  transition:
+    color 180ms ease,
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.site-nav a:hover,
+.site-nav a:focus-visible,
+.footer-link:hover,
+.footer-link:focus-visible,
+.contact-email:hover,
+.contact-email:focus-visible {
+  color: var(--accent-dark);
+}
+
+.brand:hover,
+.brand:focus-visible {
+  transform: translateY(-1px);
+}
+
+@keyframes pageFade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes floatIn {
+  from {
+    opacity: 0;
+    transform: translateY(26px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 
 @media (max-width: 960px) {
