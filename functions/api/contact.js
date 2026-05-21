@@ -15,10 +15,6 @@ function readSubmission(formData) {
 }
 
 function validateSubmission(submission) {
-  if (submission.website) {
-    return "bot";
-  }
-
   if (!submission.email) {
     return "O e-mail e obrigatorio.";
   }
@@ -60,12 +56,6 @@ export async function onRequestPost(context) {
   console.log("Submission data:", submission);
   const validationError = validateSubmission(submission);
   console.log("Validation result:", validationError || "valid");
-  if (validationError === "bot") {
-    return new Response(null, {
-      status: 303,
-      headers: { Location: "/contato/obrigado" },
-    });
-  }
 
   if (validationError) {
     return new Response(null, {
