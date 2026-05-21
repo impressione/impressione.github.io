@@ -1,11 +1,11 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
 
-const topics = [
-  "Novo produto ou sistema sob medida",
-  "Reestruturação técnica e arquitetura",
-  "Pipelines, cloud, deploy e observabilidade",
-  "Evolução de plataforma existente",
+const interestOptions = [
+  "Novo produto ou sistema",
+  "IA aplicada e agentes autônomos",
+  "Arquitetura e reestruturação técnica",
+  "DevOps, deploy e observabilidade",
 ];
 ---
 
@@ -16,44 +16,88 @@ const topics = [
 >
   <main>
     <section class="inner-hero">
-      <div class="container inner-hero-grid">
-        <div class="section-heading compact">
+      <div class="container contact-hero">
+        <div class="section-heading compact contact-intro">
           <p class="kicker">Contato</p>
-          <h1>Vamos entender o desafio e desenhar a melhor esteira para o seu software.</h1>
+          <h1>Fale com a impressione.me pelo caminho mais simples.</h1>
           <p>
-            A impressione.me apoia iniciativas de desenvolvimento ponta a ponta, da concepção da solução até a publicação e operação.
+            Se existir uma oportunidade, ideia ou necessidade técnica, basta deixar o e-mail. O restante pode vir depois.
           </p>
         </div>
 
-        <aside class="contact-card">
-          <p class="contact-label">Canal principal</p>
-          <a href="mailto:contato@impressione.me" class="contact-email">contato@impressione.me</a>
-          <p class="contact-copy">
-            Envie o contexto do projeto, estágio atual, objetivos e urgência. A partir disso, organizamos os próximos passos.
-          </p>
-        </aside>
+        <form class="feature-card contact-form-card contact-form-hero" method="post" data-cloudflare-target="contact-worker">
+          <div class="section-heading compact form-heading">
+            <p class="kicker">Formulário de contato</p>
+            <h2>Deixe seu e-mail e seguimos daí.</h2>
+            <p>
+              O e-mail é o único campo obrigatório. Se quiser, você pode adiantar mais contexto para ajudar nosso time a responder melhor.
+            </p>
+          </div>
+
+          <div class="form-grid">
+            <label class="field">
+              <span>E-mail</span>
+              <input type="email" name="email" autocomplete="email" placeholder="voce@empresa.com" required />
+            </label>
+
+            <label class="field">
+              <span>Nome</span>
+              <input type="text" name="name" autocomplete="name" placeholder="Como você se chama?" />
+            </label>
+
+            <label class="field">
+              <span>Empresa</span>
+              <input type="text" name="company" autocomplete="organization" placeholder="Nome da empresa" />
+            </label>
+
+            <label class="field">
+              <span>Interesse principal</span>
+              <select name="interest">
+                <option value="">Selecione se quiser</option>
+                {interestOptions.map((option) => (
+                  <option value={option}>{option}</option>
+                ))}
+              </select>
+            </label>
+
+            <label class="field field-full">
+              <span>Mensagem</span>
+              <textarea
+                name="message"
+                rows="5"
+                placeholder="Se quiser, conte rapidamente sobre o projeto, momento atual ou objetivo."
+              ></textarea>
+            </label>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="button button-primary">Enviar contato</button>
+            <p class="form-note">Na próxima etapa, esse envio será conectado a um Cloudflare Worker para notificar nosso time por e-mail.</p>
+          </div>
+        </form>
       </div>
     </section>
 
     <section class="section">
       <div class="container contact-layout">
+        <aside class="contact-card">
+          <p class="contact-label">Contato direto</p>
+          <a href="mailto:contato@impressione.me" class="contact-email">contato@impressione.me</a>
+          <p class="contact-copy">
+            Se preferir, você também pode escrever direto por e-mail. Ainda assim, o formulário no topo continua sendo o caminho mais rápido para começar a conversa.
+          </p>
+        </aside>
+
         <div class="feature-card emphasis">
-          <p class="kicker">Como podemos ajudar</p>
+          <p class="kicker">Como normalmente ajudamos</p>
+          <p class="contact-copy">
+            Atuamos em software sob medida, IA aplicada, agentes autônomos e esteiras modernas de entrega com DevOps.
+          </p>
           <div class="topic-list">
-            {topics.map((topic) => (
+            {interestOptions.map((topic) => (
               <span class="topic-item">{topic}</span>
             ))}
           </div>
-        </div>
-
-        <div class="feature-card">
-          <h2>O que incluir no primeiro contato</h2>
-          <p>
-            Compartilhe o momento atual da iniciativa, principais dores, prazo esperado e o tipo de apoio técnico desejado.
-          </p>
-          <p>
-            Se já existir sistema em produção, vale incluir detalhes sobre stack atual, ambiente de hospedagem e fluxo de deploy.
-          </p>
         </div>
       </div>
     </section>
