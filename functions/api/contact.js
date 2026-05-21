@@ -58,15 +58,24 @@ export async function onRequestPost(context) {
     return context.redirect("/contato/falha", 303);
   }
 
-  await context.env.CONTACT_QUEUE.send({
-    email: submission.email,
-    name: submission.name,
-    company: submission.company,
-    interest: submission.interest,
-    message: submission.message,
-    submittedAt: submission.submittedAt,
-    source: "website-contact-form",
-  });
+  const queue = context.env?.CONTACT_QUEUE;
+  if (!queue || typeof queue.send !== "function") {
+    return context.redirect("/contato/falha", 303);
+  }
+
+  try {
+    await queue.send({
+      email: submission.email,
+      name: submission.name,
+      company: submission.company,
+      interest: submission.interest,
+      message: submission.message,
+      submittedAt: submission.submittedAt,
+      source: "website-contact-form",
+    });
+  } catch {
+    return context.redirect("/contato/falha", 303);
+  }
 
   return context.redirect("/contato/obrigado", 303);
 }
