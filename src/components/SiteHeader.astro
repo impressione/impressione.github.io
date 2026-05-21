@@ -1,0 +1,25 @@
+---
+const links = [
+  { href: "/#servicos", label: "Serviços" },
+  { href: "/#esteira", label: "Esteira" },
+  { href: "/#stack", label: "Stack & DevOps" },
+  { href: "/contato", label: "Contato" },
+];
+---
+
+<header class="site-header">
+  <div class="container nav-wrap">
+    <a href="/" class="brand" aria-label="impressione.me">
+      <span class="brand-mark">im</span>
+      <span class="brand-text">impressione.me</span>
+    </a>
+
+    <nav class="site-nav" aria-label="Principal">
+      {links.map((link) => (
+        <a href={link.href}>{link.label}</a>
+      ))}
+    </nav>
+
+    <a href="/contato" class="button button-primary">Entrar em contato</a>
+  </div>
+</header>
