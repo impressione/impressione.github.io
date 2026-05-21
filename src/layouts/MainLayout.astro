@@ -1,0 +1,17 @@
+---
+const { title = "impressione.me", description = "A small company site built with Astro and deployed on Cloudflare Pages." } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230f172a'/%3E%3Ccircle cx='20' cy='20' r='8' fill='%23f97316'/%3E%3Ccircle cx='44' cy='20' r='8' fill='%2306b6d4'/%3E%3Ccircle cx='20' cy='44' r='8' fill='%23eab308'/%3E%3Ccircle cx='44' cy='44' r='8' fill='%23f8fafc'/%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
