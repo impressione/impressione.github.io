@@ -25,7 +25,11 @@ const interestOptions = [
           </p>
         </div>
 
-        <form class="feature-card contact-form-card contact-form-hero" method="post" data-cloudflare-target="contact-worker">
+        <form
+          class="feature-card contact-form-card contact-form-hero"
+          method="post"
+          action="/api/contact"
+        >
           <div class="section-heading compact form-heading">
             <p class="kicker">Formulário de contato</p>
             <h2>Deixe seu e-mail e seguimos daí.</h2>
@@ -68,11 +72,15 @@ const interestOptions = [
                 placeholder="Se quiser, conte rapidamente sobre o projeto, momento atual ou objetivo."
               ></textarea>
             </label>
+
+            <label class="field field-hidden" aria-hidden="true">
+              <span>Website</span>
+              <input type="text" name="website" tabindex="-1" autocomplete="off" />
+            </label>
           </div>
 
           <div class="form-actions">
             <button type="submit" class="button button-primary">Enviar contato</button>
-            <p class="form-note">Na próxima etapa, esse envio será conectado a um Cloudflare Worker para notificar nosso time por e-mail.</p>
           </div>
         </form>
       </div>
