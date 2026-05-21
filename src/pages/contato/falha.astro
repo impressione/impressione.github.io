@@ -1,0 +1,30 @@
+---
+import SiteLayout from "../../layouts/SiteLayout.astro";
+---
+
+<SiteLayout
+  title="Falha no envio | impressione.me"
+  description="Nao foi possivel enviar o contato agora."
+  path="/contato/falha"
+>
+  <main>
+    <section class="inner-hero">
+      <div class="container contact-hero">
+        <div class="feature-card contact-form-card contact-form-hero">
+          <div class="section-heading compact form-heading">
+            <p class="kicker">Tente novamente</p>
+            <h1>Nao foi possivel enviar o contato agora.</h1>
+            <p>
+              Vale tentar mais uma vez em instantes. Se preferir, escreva direto para
+              <a href="mailto:contato@impressione.me"> contato@impressione.me</a>.
+            </p>
+          </div>
+
+          <div class="form-actions">
+            <a href="/contato" class="button button-primary">Voltar ao formulario</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</SiteLayout>

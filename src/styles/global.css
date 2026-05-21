@@ -172,6 +172,14 @@ img {
   gap: 1.5rem;
 }
 
+.field-hidden {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 .hero-grid,
 .inner-hero-grid {
   grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr);
@@ -620,13 +628,6 @@ img {
 
 .form-actions .button {
   cursor: pointer;
-}
-
-.form-note {
-  margin: 0;
-  max-width: none;
-  color: var(--muted);
-  line-height: 1.6;
 }
 
 .emphasis {
