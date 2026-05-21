@@ -41,15 +41,19 @@ export async function onRequestOptions() {
 }
 
 export async function onRequestPost(context) {
+  console.log("Received contact form submission");
   const contentType = context.request.headers.get("content-type") || "";
   if (!contentType.includes("multipart/form-data") && !contentType.includes("application/x-www-form-urlencoded")) {
     return context.redirect("/contato/falha", 303);
   }
 
+  console.log("Parsing form data");
   const formData = await context.request.formData();
-  const submission = readSubmission(formData);
-  const validationError = validateSubmission(submission);
 
+  const submission = readSubmission(formData);
+  console.log("Submission data:", submission);
+  const validationError = validateSubmission(submission);
+  console.log("Validation result:", validationError || "valid");
   if (validationError === "bot") {
     return context.redirect("/contato/obrigado", 303);
   }
@@ -57,7 +61,7 @@ export async function onRequestPost(context) {
   if (validationError) {
     return context.redirect("/contato/falha", 303);
   }
-
+  console.log("Sending submission to queue");
   await context.env.CONTACT_QUEUE.send({
     email: submission.email,
     name: submission.name,
@@ -67,6 +71,6 @@ export async function onRequestPost(context) {
     submittedAt: submission.submittedAt,
     source: "website-contact-form",
   });
-
+  console.log("Submission sent to queue successfully");
   return context.redirect("/contato/obrigado", 303);
 }
