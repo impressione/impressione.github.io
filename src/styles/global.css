@@ -192,23 +192,23 @@ img {
 .hero-copy h1,
 .section-heading h1 {
   font-size: clamp(3.3rem, 8vw, 6.5rem);
-  max-width: 10ch;
+  max-width: none;
 }
 
 .inner-hero .section-heading h1 {
   font-size: clamp(2.4rem, 5vw, 4.25rem);
-  max-width: 12ch;
+  max-width: none;
   line-height: 1.02;
 }
 
 .section-heading h2,
 .cta-panel h2 {
   font-size: clamp(2rem, 4vw, 3.6rem);
-  max-width: 13ch;
+  max-width: none;
 }
 
 .cta-panel h2 {
-  max-width: 19ch;
+  max-width: none;
 }
 
 .lead,
@@ -225,7 +225,7 @@ img {
 }
 
 .hero-copy .lead {
-  max-width: 58ch;
+  max-width: none;
   margin-top: 1.5rem;
 }
 
@@ -353,7 +353,7 @@ img {
 }
 
 .section-heading.compact p:last-child {
-  max-width: 58ch;
+  max-width: none;
 }
 
 .card-grid.three-up {
@@ -532,15 +532,25 @@ img {
 
 .contact-intro {
   margin-bottom: 0;
-  max-width: 72ch;
+  max-width: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.contact-intro .kicker {
+  margin-bottom: 0;
 }
 
 .contact-intro h1 {
-  max-width: 12ch;
+  max-width: none;
+  font-size: clamp(2.7rem, 5vw, 4.6rem);
 }
 
 .contact-intro p {
-  max-width: 56ch;
+  margin: 0;
+  max-width: none;
+  font-size: 1.12rem;
 }
 
 .contact-form-hero {
@@ -614,7 +624,7 @@ img {
 
 .form-note {
   margin: 0;
-  max-width: 48ch;
+  max-width: none;
   color: var(--muted);
   line-height: 1.6;
 }
@@ -780,6 +790,10 @@ img {
 
   .cta-actions {
     justify-content: flex-start;
+  }
+
+  .contact-intro {
+    gap: 0.85rem;
   }
 
   .contact-form-hero {
