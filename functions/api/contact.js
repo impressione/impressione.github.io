@@ -43,8 +43,14 @@ export async function onRequestOptions() {
 export async function onRequestPost(context) {
   console.log("Received contact form submission");
   const contentType = context.request.headers.get("content-type") || "";
-  if (!contentType.includes("multipart/form-data") && !contentType.includes("application/x-www-form-urlencoded")) {
-    return context.redirect("/contato/falha", 303);
+  if (
+    !contentType.includes("multipart/form-data") &&
+    !contentType.includes("application/x-www-form-urlencoded")
+  ) {
+    return new Response(null, {
+      status: 303,
+      headers: { Location: "/contato/falha" },
+    });
   }
 
   console.log("Parsing form data");
@@ -55,11 +61,17 @@ export async function onRequestPost(context) {
   const validationError = validateSubmission(submission);
   console.log("Validation result:", validationError || "valid");
   if (validationError === "bot") {
-    return context.redirect("/contato/obrigado", 303);
+    return new Response(null, {
+      status: 303,
+      headers: { Location: "/contato/obrigado" },
+    });
   }
 
   if (validationError) {
-    return context.redirect("/contato/falha", 303);
+    return new Response(null, {
+      status: 303,
+      headers: { Location: "/contato/falha" },
+    });
   }
   console.log("Sending submission to queue");
   await context.env.CONTACT_QUEUE.send({
@@ -72,5 +84,8 @@ export async function onRequestPost(context) {
     source: "website-contact-form",
   });
   console.log("Submission sent to queue successfully");
-  return context.redirect("/contato/obrigado", 303);
+  return new Response(null, {
+    status: 303,
+    headers: { Location: "/contato/obrigado" },
+  });
 }
