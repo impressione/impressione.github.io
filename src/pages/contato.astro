@@ -1,0 +1,61 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const topics = [
+  "Novo produto ou sistema sob medida",
+  "Reestruturação técnica e arquitetura",
+  "Pipelines, cloud, deploy e observabilidade",
+  "Evolução de plataforma existente",
+];
+---
+
+<SiteLayout
+  title="Contato | impressione.me"
+  description="Entre em contato com a impressione.me para conversar sobre desenvolvimento de software, testes, build, hospedagem e DevOps."
+  path="/contato"
+>
+  <main>
+    <section class="inner-hero">
+      <div class="container inner-hero-grid">
+        <div class="section-heading compact">
+          <p class="kicker">Contato</p>
+          <h1>Vamos entender o desafio e desenhar a melhor esteira para o seu software.</h1>
+          <p>
+            A impressione.me apoia iniciativas de desenvolvimento ponta a ponta, da concepção da solução até a publicação e operação.
+          </p>
+        </div>
+
+        <aside class="contact-card">
+          <p class="contact-label">Canal principal</p>
+          <a href="mailto:contato@impressione.me" class="contact-email">contato@impressione.me</a>
+          <p class="contact-copy">
+            Envie o contexto do projeto, estágio atual, objetivos e urgência. A partir disso, organizamos os próximos passos.
+          </p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container contact-layout">
+        <div class="feature-card emphasis">
+          <p class="kicker">Como podemos ajudar</p>
+          <div class="topic-list">
+            {topics.map((topic) => (
+              <span class="topic-item">{topic}</span>
+            ))}
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <h2>O que incluir no primeiro contato</h2>
+          <p>
+            Compartilhe o momento atual da iniciativa, principais dores, prazo esperado e o tipo de apoio técnico desejado.
+          </p>
+          <p>
+            Se já existir sistema em produção, vale incluir detalhes sobre stack atual, ambiente de hospedagem e fluxo de deploy.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+</SiteLayout>

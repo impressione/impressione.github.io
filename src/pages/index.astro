@@ -1,335 +1,176 @@
 ---
-import MainLayout from "../layouts/MainLayout.astro";
+import SiteLayout from "../layouts/SiteLayout.astro";
+
+const services = [
+  {
+    title: "Produto e arquitetura",
+    description:
+      "Desenhamos sistemas com foco em clareza de negócio, arquitetura sustentável e evolução real do produto.",
+  },
+  {
+    title: "Desenvolvimento full cycle",
+    description:
+      "Construímos frontend, backend, integrações e automações com stack moderna e padrões de engenharia consistentes.",
+  },
+  {
+    title: "Qualidade e release",
+    description:
+      "Estruturamos testes, pipelines, observabilidade e processos de deploy para reduzir risco e acelerar entrega.",
+  },
+];
+
+const stages = [
+  "Descoberta técnica e definição do escopo",
+  "Arquitetura, design de solução e priorização",
+  "Desenvolvimento com testes e revisão contínua",
+  "Build, entrega, hospedagem e monitoramento",
+];
+
+const stack = [
+  "Aplicações web modernas",
+  "APIs e integrações",
+  "CI/CD e automação de deploy",
+  "Infraestrutura em nuvem",
+  "Observabilidade e operação",
+  "Testes automatizados e qualidade",
+];
 ---
 
-<MainLayout title="impressione.me" description="A compact company site for impressione.me, now ready for Cloudflare Pages.">
-  <main class="site-shell">
-    <section class="hero">
-      <div class="hero-copy">
-        <p class="eyebrow">impressione.me</p>
-        <h1>Small digital experiences with a clear point of view.</h1>
-        <p class="lede">
-          We design, ship, and support focused web projects that need to feel polished,
-          lightweight, and easy to maintain.
-        </p>
-        <div class="hero-actions">
-          <a href="mailto:hello@impressione.me" class="primary-link">Start a conversation</a>
-          <a href="#services" class="secondary-link">See what we do</a>
+<SiteLayout
+  title="impressione.me | Desenvolvimento de software ponta a ponta"
+  description="Software sob medida com desenvolvimento ponta a ponta, testes, build, hospedagem e operação em uma esteira moderna com DevOps."
+  path="/"
+>
+  <main>
+    <section class="hero-section">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="kicker">Software, produto e operação em sintonia</p>
+          <h1>Desenvolvimento de software do conceito ao ambiente de produção.</h1>
+          <p class="lead">
+            A impressione.me atua em toda a esteira: estratégia, arquitetura,
+            desenvolvimento, testes, build, hospedagem e evolução contínua com práticas modernas de DevOps.
+          </p>
+
+          <div class="hero-actions">
+            <a href="/contato" class="button button-primary">Falar com a equipe</a>
+            <a href="#servicos" class="button button-secondary">Conhecer a esteira</a>
+          </div>
+        </div>
+
+        <div class="hero-panel" aria-label="Resumo da atuação da impressione.me">
+          <div class="hero-card hero-card-large">
+            <p class="card-label">Atuação ponta a ponta</p>
+            <p class="card-value">Planejar, construir, testar, publicar e operar.</p>
+          </div>
+
+          <div class="hero-card-grid">
+            <div class="hero-card">
+              <p class="card-label">Entrega</p>
+              <p class="card-value">Fluxos enxutos com release contínuo.</p>
+            </div>
+            <div class="hero-card">
+              <p class="card-label">Qualidade</p>
+              <p class="card-value">Testes e observabilidade desde o início.</p>
+            </div>
+            <div class="hero-card">
+              <p class="card-label">Infra</p>
+              <p class="card-value">Deploy, cloud e operação com previsibilidade.</p>
+            </div>
+          </div>
         </div>
       </div>
+    </section>
 
-      <div class="hero-visual" aria-hidden="true">
-        <div class="visual-frame frame-a"></div>
-        <div class="visual-frame frame-b"></div>
-        <div class="visual-frame frame-c"></div>
-        <div class="visual-panel">
-          <span>Brand</span>
-          <span>Web</span>
-          <span>Infra</span>
+    <section class="section">
+      <div class="container stat-band">
+        <div>
+          <p class="stat-value">Produto + Engenharia</p>
+          <p class="stat-copy">A solução é pensada para o negócio e implementada com responsabilidade técnica.</p>
+        </div>
+        <div>
+          <p class="stat-value">DevOps na prática</p>
+          <p class="stat-copy">Pipelines, build, hospedagem e monitoramento entram como parte da entrega.</p>
+        </div>
+        <div>
+          <p class="stat-value">Escalável desde cedo</p>
+          <p class="stat-copy">Estrutura pronta para evoluir com menos retrabalho e mais segurança.</p>
         </div>
       </div>
     </section>
 
-    <section class="band metrics" aria-label="Highlights">
-      <div>
-        <strong>Fast</strong>
-        <p>Static-first delivery with a clean deployment path.</p>
-      </div>
-      <div>
-        <strong>Practical</strong>
-        <p>Simple tooling, sensible defaults, and low operational drag.</p>
-      </div>
-      <div>
-        <strong>Reliable</strong>
-        <p>Built to move from idea to production without ceremony.</p>
+    <section id="servicos" class="section">
+      <div class="container">
+        <div class="section-heading">
+          <p class="kicker">Serviços</p>
+          <h2>Uma operação técnica completa para tirar sistemas do papel e sustentar crescimento.</h2>
+          <p>
+            Trabalhamos lado a lado com empresas que precisam transformar demandas de software em produtos estáveis, úteis e bem operados.
+          </p>
+        </div>
+
+        <div class="card-grid three-up">
+          {services.map((service) => (
+            <article class="feature-card">
+              <h3>{service.title}</h3>
+              <p>{service.description}</p>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
 
-    <section id="services" class="band services">
-      <div class="section-head">
-        <p class="eyebrow">Services</p>
-        <h2>What we help teams deliver</h2>
-      </div>
+    <section id="esteira" class="section section-accent">
+      <div class="container process-grid">
+        <div class="section-heading compact">
+          <p class="kicker">Esteira de entrega</p>
+          <h2>Do planejamento à operação, com menos atrito entre times e etapas.</h2>
+          <p>
+            Organizamos a jornada técnica para que decisões, código, infraestrutura e qualidade conversem entre si.
+          </p>
+        </div>
 
-      <div class="service-grid">
-        <article>
-          <h3>Company sites</h3>
-          <p>Lean websites that communicate clearly and load quickly on every device.</p>
-        </article>
-        <article>
-          <h3>Product surfaces</h3>
-          <p>Focused interfaces for internal tools, launch pages, and lightweight apps.</p>
-        </article>
-        <article>
-          <h3>Cloud delivery</h3>
-          <p>Infrastructure and deployment setups that keep maintenance calm and predictable.</p>
-        </article>
+        <ol class="timeline">
+          {stages.map((stage, index) => (
+            <li>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <p>{stage}</p>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
 
-    <section class="band story">
-      <div class="section-head">
-        <p class="eyebrow">Approach</p>
-        <h2>Calm systems, thoughtful details, real shipping discipline.</h2>
+    <section id="stack" class="section">
+      <div class="container stack-grid">
+        <div class="section-heading compact">
+          <p class="kicker">Stack moderna com DevOps</p>
+          <h2>Tecnologia atual, automação e processos confiáveis para entregar com velocidade.</h2>
+          <p>
+            A stack é escolhida conforme o contexto do projeto, sempre com foco em manutenção, desempenho, rastreabilidade e segurança operacional.
+          </p>
+        </div>
+
+        <div class="tag-panel">
+          {stack.map((item) => (
+            <span class="tag">{item}</span>
+          ))}
+        </div>
       </div>
-      <p class="story-copy">
-        impressione.me pairs design sensitivity with implementation care. The goal is not noise
-        or novelty for its own sake. It is a site or product surface that feels intentional,
-        performs well, and stays easy to evolve.
-      </p>
     </section>
 
-    <section class="band contact">
-      <div>
-        <p class="eyebrow">Contact</p>
-        <h2>Let’s make the next version simpler and better.</h2>
+    <section class="section">
+      <div class="container cta-panel">
+        <div>
+          <p class="kicker">Vamos conversar</p>
+          <h2>Se você precisa evoluir um produto ou estruturar uma nova entrega, a impressione.me pode assumir a jornada técnica com você.</h2>
+        </div>
+
+        <div class="cta-actions">
+          <a href="/contato" class="button button-primary">Ir para contato</a>
+          <a href="mailto:contato@impressione.me" class="button button-secondary">contato@impressione.me</a>
+        </div>
       </div>
-      <a href="mailto:hello@impressione.me" class="primary-link">hello@impressione.me</a>
     </section>
   </main>
-
-  <style>
-    :root {
-      color-scheme: light;
-      --bg: #f6f4ee;
-      --surface: #fffaf0;
-      --ink: #111827;
-      --muted: #4b5563;
-      --line: rgba(17, 24, 39, 0.12);
-      --orange: #f97316;
-      --cyan: #0891b2;
-      --yellow: #eab308;
-      --white: #fffdf8;
-      --shadow: 0 24px 60px rgba(17, 24, 39, 0.12);
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--bg);
-      color: var(--ink);
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    .site-shell {
-      min-height: 100vh;
-    }
-
-    .hero,
-    .band {
-      width: min(1120px, calc(100% - 2rem));
-      margin: 0 auto;
-    }
-
-    .hero {
-      display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
-      gap: 3rem;
-      align-items: center;
-      min-height: 100vh;
-      padding: 4rem 0 3rem;
-    }
-
-    .hero-copy h1,
-    .section-head h2,
-    .contact h2 {
-      margin: 0;
-      line-height: 1.02;
-      letter-spacing: 0;
-    }
-
-    .hero-copy h1 {
-      font-size: clamp(3rem, 8vw, 5.8rem);
-      max-width: 10ch;
-    }
-
-    .lede,
-    .story-copy,
-    .metrics p,
-    .service-grid p {
-      color: var(--muted);
-      font-size: 1.05rem;
-      line-height: 1.7;
-      margin: 0;
-    }
-
-    .lede {
-      max-width: 56ch;
-      margin-top: 1.5rem;
-    }
-
-    .eyebrow {
-      margin: 0 0 1rem;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 0;
-      color: var(--muted);
-    }
-
-    .hero-actions,
-    .contact {
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-top: 2rem;
-    }
-
-    .primary-link,
-    .secondary-link {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 48px;
-      padding: 0 1.2rem;
-      border-radius: 8px;
-      border: 1px solid var(--line);
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .primary-link {
-      background: var(--ink);
-      color: var(--white);
-      border-color: transparent;
-    }
-
-    .secondary-link {
-      background: transparent;
-    }
-
-    .hero-visual {
-      position: relative;
-      aspect-ratio: 4 / 5;
-      min-height: 420px;
-    }
-
-    .visual-frame,
-    .visual-panel {
-      position: absolute;
-      border-radius: 8px;
-      box-shadow: var(--shadow);
-    }
-
-    .frame-a {
-      inset: 8% 28% 18% 0;
-      background:
-        linear-gradient(145deg, rgba(248, 250, 252, 0.9), rgba(248, 250, 252, 0.32)),
-        linear-gradient(160deg, rgba(249, 115, 22, 0.85), rgba(8, 145, 178, 0.7));
-    }
-
-    .frame-b {
-      inset: 0 0 28% 32%;
-      background:
-        linear-gradient(180deg, rgba(255, 253, 248, 0.12), rgba(255, 253, 248, 0.82)),
-        linear-gradient(145deg, rgba(234, 179, 8, 0.9), rgba(8, 145, 178, 0.8));
-    }
-
-    .frame-c {
-      inset: 52% 10% 0 18%;
-      background:
-        linear-gradient(180deg, rgba(17, 24, 39, 0.08), rgba(17, 24, 39, 0)),
-        linear-gradient(160deg, rgba(255, 253, 248, 0.95), rgba(249, 115, 22, 0.82));
-    }
-
-    .visual-panel {
-      right: 6%;
-      bottom: 8%;
-      display: grid;
-      gap: 0.6rem;
-      padding: 1rem;
-      background: rgba(255, 250, 240, 0.88);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(17, 24, 39, 0.08);
-      min-width: 140px;
-    }
-
-    .visual-panel span {
-      display: block;
-      padding: 0.65rem 0.8rem;
-      border-radius: 8px;
-      background: var(--white);
-      font-weight: 600;
-      text-align: center;
-    }
-
-    .band {
-      padding: 0 0 5rem;
-    }
-
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 1.25rem;
-    }
-
-    .metrics div,
-    .service-grid article {
-      padding: 1.4rem;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: rgba(255, 253, 248, 0.85);
-    }
-
-    .metrics strong,
-    .service-grid h3 {
-      display: block;
-      margin-bottom: 0.55rem;
-      font-size: 1rem;
-    }
-
-    .section-head {
-      display: grid;
-      gap: 0.4rem;
-      margin-bottom: 1.6rem;
-      max-width: 60ch;
-    }
-
-    .section-head h2,
-    .contact h2 {
-      font-size: clamp(2rem, 4vw, 3.3rem);
-    }
-
-    .service-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 1.25rem;
-    }
-
-    .story-copy {
-      max-width: 68ch;
-    }
-
-    .contact {
-      justify-content: space-between;
-      padding-bottom: 6rem;
-      border-top: 1px solid var(--line);
-      padding-top: 2rem;
-    }
-
-    @media (max-width: 900px) {
-      .hero {
-        grid-template-columns: 1fr;
-        min-height: auto;
-        padding-top: 2rem;
-      }
-
-      .hero-copy h1 {
-        max-width: 12ch;
-      }
-
-      .metrics,
-      .service-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
-</MainLayout>
+</SiteLayout>
