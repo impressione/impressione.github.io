@@ -7,8 +7,8 @@
   --ink: #191919;
   --muted: #60584c;
   --line: rgba(25, 25, 25, 0.1);
-  --accent: #d8652d;
-  --accent-dark: #b34d1d;
+  --accent: #c4372c;
+  --accent-dark: #a42c22;
   --olive: #49563c;
   --shadow: 0 24px 60px rgba(58, 46, 24, 0.12);
   --radius: 28px;
@@ -98,10 +98,15 @@ img {
   width: 2.75rem;
   height: 2.75rem;
   border-radius: 0.95rem;
-  background: #1d1c1a;
-  color: #f7f2e8;
-  font-size: 0.95rem;
+  background: var(--accent);
+  color: #ffffff;
+  font-size: 1.45rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 700;
+  line-height: 1;
   text-transform: lowercase;
+  box-shadow: 0 16px 34px rgba(196, 55, 44, 0.28);
 }
 
 .brand-text,
