@@ -16,6 +16,15 @@ export function onRequestGet(context) {
 export async function onRequestPost(context) {
   const req = context.request;
   console.log("Instagram request body:");
-  console.log(req.body);
+
+  try {
+    const body = await req.json();
+    console.log(JSON.stringify(body, null, 2));
+  } catch (error) {
+    console.log("Failed to parse request body as JSON:", error);
+    const text = await req.text();
+    console.log(text);
+  }
+
   return new Response("OK", { status: 200 });
 }
