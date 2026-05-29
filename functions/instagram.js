@@ -19,7 +19,7 @@ export async function onRequestPost(context) {
 
   try {
     const body = await req.json();
-    console.log(JSON.stringify(body, null, 2));
+    console.log(body);
   } catch (error) {
     console.log("Failed to parse request body as JSON:", error);
     const text = await req.text();
