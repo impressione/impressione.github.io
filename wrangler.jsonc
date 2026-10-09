@@ -34,10 +34,59 @@
     "FROM_EMAIL": "contato@impressione.me",
     "TEAM_EMAIL": "contato@impressione.me"
   },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "impressione-contacts",
+      "database_id": "PASTE_ID_AFTER_WRANGLER_D1_CREATE",
+      "migrations_dir": "workers/app/migrations"
+    }
+  ],
+  "ai": {
+    "binding": "AI"
+  },
+  "workflows": [
+    {
+      "binding": "CONTACT_WORKFLOW",
+      "name": "contact-workflow",
+      "class_name": "ContactWorkflow"
+    }
+  ],
+  "triggers": {
+    "crons": ["0 12 * * *"]
+  },
   "send_email": [
     {
       "name": "EMAIL"
     }
   ],
-  "preview_urls": true
+  "preview_urls": true,
+  "previews": {
+    "vars": {
+      "FROM_EMAIL": "contato@impressione.me",
+      "TEAM_EMAIL": "contato@impressione.me"
+    },
+    "d1_databases": [
+      {
+        "binding": "DB",
+        "database_id": "PASTE_PREVIEW_DB_ID_AFTER_CREATE"
+      }
+    ],
+    "send_email": [
+      {
+        "name": "EMAIL"
+      }
+    ],
+    "queues": {
+      "producers": [
+        {
+          "binding": "CONTACT_QUEUE",
+          "queue": "impressione-me-contact-preview"
+        }
+      ]
+    },
+    "ai": {
+      "binding": "AI"
+    }
+  }
 }

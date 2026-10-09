@@ -7,9 +7,13 @@ fila (`fetch` + `queue` no mesmo entrypoint). Deploy único: `npm run deploy`.
 wrangler.jsonc      config do Worker (raiz: o Wrangler e o Builds acham sozinhos)
 workers/
   app/
-    index.js             entrypoint (fetch + queue)
+    index.js             entrypoint (fetch + queue fino + scheduled)
     contact-producer.js  form -> fila
-    contact-consumer.js  fila -> email
+    contact-consumer.js  dedupe D1 -> workflow.create (+ helpers de email)
+    contact-classifier.js  clef-flash (fail-closed)
+    contact-workflow.js  ContactWorkflow (classifica -> roteia)
+    daily-summary.js     query + monta resumo diário
+    migrations/          DDL do D1
 ```
 
 ## Convenção
@@ -19,9 +23,8 @@ workers/
   `wrangler.jsonc` e o deploy passa a usar `-c`.
 - Código compartilhado (schema da mensagem da fila, validação) vai para
   `workers/shared/` quando o segundo uso aparecer — não antes.
-- Recursos compartilhados (fila `impressione-me-contact`, futura tabela D1)
-  são gerenciados via Terraform no repo `infrastructure` e referenciados
-  pelos bindings.
+- Recursos compartilhados: fila auto-provisionada pelo Wrangler; D1 criado
+  via `wrangler d1 create` + migrations versionadas aqui; DNS segue Terraform.
 
 ## Deploy (Workers Builds)
 

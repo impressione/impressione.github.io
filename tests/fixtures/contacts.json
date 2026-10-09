@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Mariana Lopes",
+    "company": "Loja Vista",
+    "interest": "Novo produto ou sistema",
+    "message": "Precisamos de um sistema para controlar estoque e vendas. Podemos agendar uma conversa esta semana?",
+    "expected": "real_contact"
+  },
+  {
+    "name": "Carlos",
+    "company": "",
+    "interest": "IA aplicada e automação",
+    "message": "Quero automatizar o atendimento do meu escritório com IA. Qual o investimento médio?",
+    "expected": "real_contact"
+  },
+  {
+    "name": "Rafael SEO",
+    "company": "TopRank Marketing",
+    "interest": "DevOps, deploy e observabilidade",
+    "message": "Aumentamos seu tráfego em 300% com SEO garantido. Pacotes a partir de R$499/mês. Responda para receber proposta.",
+    "expected": "marketing"
+  },
+  {
+    "name": "Guest",
+    "company": "LinkBuilding Pro",
+    "interest": "Novo produto ou sistema",
+    "message": "CHECK OUT http://cheap-links.example BEST PRICES buy now!!!",
+    "expected": "bot_noise"
+  },
+  {
+    "name": "asdf",
+    "company": "qwer",
+    "interest": "IA aplicada e automação",
+    "message": "teste 123",
+    "expected": "bot_noise"
+  },
+  {
+    "name": "Paula Mendes",
+    "company": "Clínica Essenza",
+    "interest": "Arquitetura e reestruturação técnica",
+    "message": "Herdamos um sistema legado em PHP e queremos reescrever. Vocês fazem esse tipo de trabalho?",
+    "expected": "real_contact"
+  }
+]

@@ -63,15 +63,20 @@ export async function handleContact(request, env) {
   }
 
   console.log("Sending submission to queue");
-  await env.CONTACT_QUEUE.send({
-    email: submission.email,
-    name: submission.name,
-    company: submission.company,
-    interest: submission.interest,
-    message: submission.message,
-    submittedAt: submission.submittedAt,
-    source: "website-contact-form",
-  });
+  try {
+    await env.CONTACT_QUEUE.send({
+      email: submission.email,
+      name: submission.name,
+      company: submission.company,
+      interest: submission.interest,
+      message: submission.message,
+      submittedAt: submission.submittedAt,
+      source: "website-contact-form",
+    });
+  } catch (err) {
+    console.log("Queue send failed:", err?.message || err);
+    return redirect("/contato/falha");
+  }
   console.log("Submission sent to queue successfully");
   return redirect("/contato/obrigado");
 }
