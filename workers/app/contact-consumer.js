@@ -1,3 +1,5 @@
+import { ensureSchema } from "./db.js";
+
 function normalize(value) {
   return typeof value === "string" ? value.trim() : "";
 }
@@ -45,6 +47,8 @@ export async function sendNewContactEmail(env, contact, subject) {
 // Consumer fino: dedupe + dispara 1 instância do workflow por contato.
 // O processamento durável (classificar → rotear) mora no ContactWorkflow.
 export async function handleQueue(batch, env) {
+  await ensureSchema(env.DB);
+
   for (const message of batch.messages) {
     const submission = sanitizeSubmission(message.body);
 
