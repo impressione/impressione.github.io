@@ -40,5 +40,40 @@
     "interest": "Arquitetura e reestruturação técnica",
     "message": "Herdamos um sistema legado em PHP e queremos reescrever. Vocês fazem esse tipo de trabalho?",
     "expected": "real_contact"
+  },
+  {
+    "name": "John Smith",
+    "company": "Acme Ltd",
+    "interest": "Novo produto ou sistema",
+    "message": "Hi, we need a dashboard for our logistics operation. Do you take international clients?",
+    "expected": "real_contact"
+  },
+  {
+    "name": "Suporte Financeiro",
+    "company": "",
+    "interest": "DevOps, deploy e observabilidade",
+    "message": "Sua conta será bloqueada em 24h por atividade suspeita. Confirme seus dados acessando http://impressione-me-seguro.example/login",
+    "expected": "phishing_scam"
+  },
+  {
+    "name": "Crypto Bonus",
+    "company": "",
+    "interest": "Novo produto ou sistema",
+    "message": "Você ganhou 0.5 BTC! Envie uma taxa de ativação para resgatar seu prêmio agora mesmo.",
+    "expected": "phishing_scam"
+  },
+  {
+    "name": "García López",
+    "company": "Tienda Norte",
+    "interest": "Novo produto ou sistema",
+    "message": "Necesitamos un sistema de inventario para nuestra tienda. ¿Hablan español?",
+    "expected": "suspicious_language"
+  },
+  {
+    "name": "Иван",
+    "company": "",
+    "interest": "IA aplicada e automação",
+    "message": "Предлагаем продвижение сайта, дешево и быстро.",
+    "expected": "suspicious_language"
   }
 ]

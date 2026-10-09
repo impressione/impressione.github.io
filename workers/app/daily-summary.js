@@ -28,15 +28,24 @@ export async function queryPendingReview(db, sinceIso) {
   return { counts, items: itemsRow.results ?? [] };
 }
 
+const TYPE_LABELS = {
+  real_contact: "reais",
+  marketing: "mkt",
+  bot_noise: "bot",
+  phishing_scam: "phishing",
+  suspicious_language: "idioma",
+  unclassified: "pendentes",
+};
+
 export function buildDailySummaryEmail({ day, counts, items }) {
-  const marketing = counts.marketing ?? 0;
-  const bot = counts.bot_noise ?? 0;
-  const pending = counts.unclassified ?? 0;
+  const parts = Object.entries(counts).map(
+    ([type, n]) => `${n} ${TYPE_LABELS[type] ?? type}`,
+  );
 
   const lines = [
     `Resumo de contatos — ${day}`,
     "",
-    `Marketing: ${marketing} · Bot noise: ${bot} · Pendentes: ${pending}`,
+    parts.length > 0 ? parts.join(" · ") : "Nada a revisar nas últimas 24h.",
     "",
   ];
 
@@ -53,7 +62,10 @@ export function buildDailySummaryEmail({ day, counts, items }) {
   }
 
   return {
-    subject: `Resumo diário de contatos (${marketing} mkt · ${bot} bot · ${pending} pendentes)`,
+    subject:
+      parts.length > 0
+        ? `Resumo diário de contatos (${parts.join(" · ")})`
+        : "Resumo diário de contatos (nada a revisar)",
     text: lines.join("\n"),
   };
 }
