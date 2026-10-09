@@ -65,7 +65,8 @@ Automático via **Workers Builds** (1 projeto `impressione-me` ligado ao repo):
 | `/` (raiz) | `npm run build` | `npx wrangler deploy -c workers/app/wrangler.jsonc` |
 
 Preview por PR ativo (`preview_urls: true`). Manual: `npm run deploy`.
-Recursos criados uma vez, fora do pipeline: `npm run queue:create` e os
+Recursos criados uma vez, fora do deploy: fila `impressione-me-contact`
+(Terraform no repo `infrastructure`, módulo `cloudflare-workers`) e os
 Custom Domains `impressione.me` + `www` no Worker.
 
 ## Relação com o repo de infra

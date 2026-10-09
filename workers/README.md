@@ -18,7 +18,7 @@ workers/
 - Código compartilhado (schema da mensagem da fila, validação) vai para
   `workers/shared/` quando o segundo uso aparecer — não antes.
 - Recursos compartilhados (fila `impressione-me-contact`, futura tabela D1)
-  são criados uma vez via CLI (`npm run queue:create`, etc.) e referenciados
+  são gerenciados via Terraform no repo `infrastructure` e referenciados
   pelos bindings.
 
 ## Deploy (Workers Builds)

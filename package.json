@@ -10,7 +10,6 @@
     "preview": "astro preview",
     "test": "node --test tests/",
     "dev:worker": "npm run build && wrangler dev -c workers/app/wrangler.jsonc",
-    "queue:create": "wrangler queues create impressione-me-contact",
     "deploy": "npm run build && wrangler deploy -c workers/app/wrangler.jsonc"
   },
   "devDependencies": {
