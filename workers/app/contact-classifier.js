@@ -73,12 +73,11 @@ export async function classifyContact(ai, submission) {
         questions: {
           tipo: {
             type: "choice",
-            instructions:
-              "Classifique o CONTEÚDO da mensagem do formulário de contato de uma consultoria de software.",
+            instructions: "Classifique o CONTEÚDO da mensagem do formulário de contato de uma consultoria de software.",
             criteria: {
-            real_contact: "Pedido legítimo de projeto, orçamento ou conversa sobre software",
-            phishing_scam: "Tentativa de golpe: urgência falsa, conta bloqueada, prêmio, pedido de dados/senha/pagamento, links suspeitos. Em dúvida entre spam e phishing, prefira phishing_scam",
-            spam: "Lixo genérico sem tentativa clara de golpe: ofertas em massa (SEO, tráfego, listas, parcerias), testes, gibberish, link dumps. Prioridade menor que phishing_scam",
+              real_contact: "Pedido legítimo de projeto, orçamento ou conversa sobre software",
+              phishing_scam: "Tentativa de golpe: urgência falsa, conta bloqueada, prêmio, pedido de dados/senha/pagamento, links suspeitos. Em dúvida entre spam e phishing, prefira phishing_scam",
+              spam: "Lixo genérico sem tentativa clara de golpe: ofertas em massa (SEO, tráfego, listas, parcerias), testes, gibberish, link dumps. Prioridade menor que phishing_scam",
               suspicious_language: "Apenas se nada acima se aplicar e o texto claramente não for português nem inglês",
             },
           },
