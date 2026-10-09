@@ -62,7 +62,7 @@ Automático via **Workers Builds** (1 projeto `impressione-me` ligado ao repo):
 
 | Root directory | Build command | Deploy command |
 |---|---|---|
-| `/` (raiz) | `npm run build` | `npx wrangler deploy -c workers/app/wrangler.jsonc` |
+| `/` (raiz) | `npm run build` | `npx wrangler deploy` |
 
 Preview por PR ativo (`preview_urls: true`). Manual: `npm run deploy`.
 Recursos criados uma vez, fora do deploy: fila `impressione-me-contact`

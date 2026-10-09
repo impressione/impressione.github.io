@@ -1,12 +1,12 @@
 {
-  "$schema": "../../node_modules/wrangler/config-schema.json",
+  "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "impressione-me",
   "compatibility_date": "2026-10-09",
   "compatibility_flags": ["nodejs_compat"],
-  "main": "./index.js",
+  "main": "./workers/app/index.js",
   "assets": {
     "binding": "ASSETS",
-    "directory": "../../dist",
+    "directory": "./dist",
     "not_found_handling": "404-page"
   },
   "observability": {

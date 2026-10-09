@@ -9,8 +9,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "test": "node --test tests/",
-    "dev:worker": "npm run build && wrangler dev -c workers/app/wrangler.jsonc",
-    "deploy": "npm run build && wrangler deploy -c workers/app/wrangler.jsonc"
+    "dev:worker": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy"
   },
   "devDependencies": {
     "astro": "^7.1.6",

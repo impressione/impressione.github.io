@@ -4,17 +4,19 @@ Um Worker só: serve o site estático, recebe o form de contato e consome a
 fila (`fetch` + `queue` no mesmo entrypoint). Deploy único: `npm run deploy`.
 
 ```
+wrangler.jsonc      config do Worker (raiz: o Wrangler e o Builds acham sozinhos)
 workers/
   app/
-    index.js       fetch (/api/contact -> fila, resto -> ASSETS) + queue (fila -> email)
-    wrangler.jsonc
+    index.js             entrypoint (fetch + queue)
+    contact-producer.js  form -> fila
+    contact-consumer.js  fila -> email
 ```
 
 ## Convenção
 
-- Pasta `workers/` (plural) como contêiner para o caso de um segundo Worker
-  aparecer (ex. cron isolado) — cada um com nome singular e `wrangler.jsonc`
-  próprio. Hoje só existe `app`.
+- Config `wrangler.jsonc` na raiz (1 Worker = 1 config). Se um segundo Worker
+  aparecer (ex. cron isolado), cada um ganha pasta própria com seu
+  `wrangler.jsonc` e o deploy passa a usar `-c`.
 - Código compartilhado (schema da mensagem da fila, validação) vai para
   `workers/shared/` quando o segundo uso aparecer — não antes.
 - Recursos compartilhados (fila `impressione-me-contact`, futura tabela D1)
@@ -27,7 +29,7 @@ Um único projeto conectado ao repo Git:
 
 | Projeto | Root directory | Build command | Deploy command | Watch paths |
 |---|---|---|---|---|
-| `impressione-me` | `/` (raiz) | `npm run build` | `npx wrangler deploy -c workers/app/wrangler.jsonc` | `src/**`, `public/**`, `workers/**`, `astro.config.mjs`, `package.json` |
+| `impressione-me` | `/` (raiz) | `npm run build` | `npx wrangler deploy` | `src/**`, `public/**`, `workers/**`, `wrangler.jsonc`, `astro.config.mjs`, `package.json` |
 
 Preview por PR ativo (`preview_urls: true`). Deploy manual local: `npm run deploy`.
 
