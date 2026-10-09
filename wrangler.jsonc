@@ -66,8 +66,7 @@
     },
     "d1_databases": [
       {
-        "binding": "DB",
-        "database_id": "PASTE_PREVIEW_DB_ID_AFTER_CREATE"
+        "binding": "DB"
       }
     ],
     "send_email": [
