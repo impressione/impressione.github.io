@@ -73,9 +73,15 @@ Automático via **Workers Builds** (1 projeto `impressione-me` ligado ao repo):
 Preview por PR ativo (`preview_urls: true`). Manual: `npm run deploy`.
 Setup uma vez, fora do deploy:
 1. `wrangler d1 create impressione-contacts` → colar o `database_id` no
-   `wrangler.jsonc` (hoje placeholder).
-2. Custom Domains `impressione.me` + `www` no Worker (Terraform, repo infra).
-3. Checar plano do clef-flash: 1 chamada em preview; `403`/erro `5035`
+   `wrangler.jsonc` (hoje placeholder); depois
+   `npm run db:migrate` (aplica o DDL).
+2. Preview isolado (para não tocar em produção a partir de PRs):
+   `wrangler d1 create impressione-contacts-preview` e
+   `wrangler queues create impressione-me-contact-preview` → colar os ids
+   no bloco `previews` do `wrangler.jsonc`; depois
+   `wrangler d1 migrations apply impressione-contacts-preview --remote`.
+3. Custom Domains `impressione.me` + `www` no Worker (Terraform, repo infra).
+4. Checar plano do clef-flash: 1 chamada em preview; `403`/erro `5035`
    significa que exige Workers Paid ($5/mês).
 
 ## Relação com o repo de infra
