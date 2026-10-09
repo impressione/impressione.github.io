@@ -77,7 +77,11 @@ export async function handleQueue(batch, env) {
       continue;
     }
 
-    const contactId = inserted.meta.last_row_rowid;
+    const contactId = inserted.meta.last_row_id;
+    if (!Number.isInteger(contactId)) {
+      console.log("Insert without row id, skipping workflow");
+      continue;
+    }
     await env.CONTACT_WORKFLOW.create({
       id: `contact-${contactId}`,
       params: { contactId },
