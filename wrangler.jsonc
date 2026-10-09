@@ -37,8 +37,6 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "impressione-contacts",
-      "database_id": "PASTE_ID_AFTER_WRANGLER_D1_CREATE",
       "migrations_dir": "workers/app/migrations"
     }
   ],

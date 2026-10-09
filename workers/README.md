@@ -23,8 +23,9 @@ workers/
   `wrangler.jsonc` e o deploy passa a usar `-c`.
 - Código compartilhado (schema da mensagem da fila, validação) vai para
   `workers/shared/` quando o segundo uso aparecer — não antes.
-- Recursos compartilhados: fila auto-provisionada pelo Wrangler; D1 criado
-  via `wrangler d1 create` + migrations versionadas aqui; DNS segue Terraform.
+- Recursos compartilhados: fila auto-provisionada pelo Wrangler no primeiro
+  deploy; D1 idem (`impressione-me-db`, DDL em `migrations/` aplicado pelo
+  Build command); DNS segue Terraform.
 
 ## Deploy (Workers Builds)
 

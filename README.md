@@ -68,13 +68,13 @@ Automático via **Workers Builds** (1 projeto `impressione-me` ligado ao repo):
 
 | Root directory | Build command | Deploy command |
 |---|---|---|
-| `/` (raiz) | `npm run build && npx wrangler d1 migrations apply impressione-contacts --remote` | `npx wrangler deploy` |
+| `/` (raiz) | `npm run build && npx wrangler d1 migrations apply impressione-me-db --remote` | `npx wrangler deploy` |
 
 Preview por PR ativo (`preview_urls: true`). Manual: `npm run deploy`.
 Setup uma vez, fora do deploy:
-1. `wrangler d1 create impressione-contacts` → colar o `database_id` no
-   `wrangler.jsonc` (hoje placeholder); depois
-   `npm run db:migrate` (aplica o DDL).
+1. Nada para o D1 de produção: o primeiro deploy auto-provisiona o banco
+   `impressione-me-db` a partir do binding; o DDL entra pelo `db:migrate`
+   do Build command acima.
 2. Preview isolado (para não tocar em produção a partir de PRs):
    `wrangler d1 create impressione-contacts-preview` e
    `wrangler queues create impressione-me-contact-preview` → colar os ids

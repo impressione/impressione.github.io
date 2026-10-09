@@ -9,7 +9,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "test": "node --test tests/",
-    "db:migrate": "wrangler d1 migrations apply impressione-contacts --remote",
+    "db:migrate": "wrangler d1 migrations apply impressione-me-db --remote",
     "dev:worker": "npm run build && wrangler dev",
     "deploy": "npm run build && wrangler deploy"
   },
