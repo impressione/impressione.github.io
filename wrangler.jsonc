@@ -37,6 +37,7 @@
   "d1_databases": [
     {
       "binding": "DB",
+      "database_name": "impressione-me-db",
       "migrations_dir": "workers/app/migrations"
     }
   ],
