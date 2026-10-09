@@ -18,28 +18,28 @@ describe("db schema", () => {
     assert.equal(normalize(getSchemaSql()), normalize(file));
   });
 
-  it("ensureSchema runs once per isolate, retries after failure", async () => {
+  it("ensureSchema batches single statements once, retries after failure", async () => {
     _resetSchemaForTests();
-    let calls = 0;
-    const failing = { exec: async () => { calls++; throw new Error("d1 down"); } };
+    let batches = 0;
+    const failing = {
+      prepare: (sql) => ({ sql }),
+      batch: async () => { batches++; throw new Error("d1 down"); },
+    };
     await assert.rejects(() => ensureSchema(failing), /d1 down/);
 
-    const received = [];
-    const ok = { exec: async (sql) => { calls++; received.push(sql); } };
-    await ensureSchema(ok);
-    await ensureSchema(ok);
-    assert.equal(calls, 4); // 1 falha + 3 statements (2ª chamada usa cache)
-    assert.equal(received.length, 3);
-  });
-
-  it("exec receives single statements (D1 rejects multi-statement exec)", async () => {
-    _resetSchemaForTests();
-    const d1Like = {
-      exec: async (sql) => {
-        // Reproduz o comportamento real do D1 que quebrou produção.
-        if (sql.includes(";")) throw new Error("incomplete input: SQLITE_ERROR");
+    const prepared = [];
+    const ok = {
+      prepare: (sql) => {
+        prepared.push(sql);
+        return { sql };
       },
+      batch: async (stmts) => { batches++; return stmts.map(() => ({})); },
     };
-    await ensureSchema(d1Like); // não deve lançar
+    await ensureSchema(ok);
+    await ensureSchema(ok);
+    assert.equal(batches, 2); // 1 falha + 1 sucesso (2ª chamada usa cache)
+    assert.equal(prepared.length, 3);
+    assert.ok(prepared.every((sql) => !sql.includes(";")));
+    assert.ok(prepared[0].startsWith("CREATE TABLE IF NOT EXISTS contacts"));
   });
 });

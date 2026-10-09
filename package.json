@@ -11,7 +11,7 @@
     "test": "node --test tests/",
     "db:migrate": "wrangler d1 migrations apply impressione-me-db --remote",
     "dev:worker": "npm run build && wrangler dev",
-    "deploy": "npm run build && wrangler deploy"
+    "deploy": "npm run build && npm run db:migrate && wrangler deploy"
   },
   "devDependencies": {
     "astro": "^7.1.6",

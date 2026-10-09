@@ -13,7 +13,7 @@ function mockEnv({ changes = 1, rowid = 7 } = {}) {
       TEAM_EMAIL: "contato@impressione.me",
       EMAIL: { send: async () => {} },
       DB: {
-        exec: async () => {},
+        batch: async () => [],
         prepare: () => ({
           bind: () => ({
             run: async () => ({ meta: { changes, last_row_rowid: rowid } }),
