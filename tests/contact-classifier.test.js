@@ -12,18 +12,19 @@ function mockAI(answer) {
 }
 
 describe("contact classifier (clef-flash)", () => {
-  it("high-confidence choice -> type with confidence", async () => {
+  it("high-confidence choice -> type with confidence + breakdown reason", async () => {
     const ai = mockAI({
-      probabilities: { real_contact: 0.91, marketing: 0.06, bot_noise: 0.03 },
+      probabilities: { real_contact: 0.91, marketing: 0.06, spam: 0.03 },
     });
     const res = await classifyContact(ai, { message: "x" });
     assert.equal(res.type, "real_contact");
     assert.equal(res.confidence, 0.91);
+    assert.match(res.reason, /real_contact 0\.91/);
   });
 
   it("below threshold -> unclassified (fail-closed)", async () => {
     const ai = mockAI({
-      probabilities: { real_contact: 0.5, marketing: 0.4, bot_noise: 0.1 },
+      probabilities: { real_contact: 0.5, marketing: 0.4, spam: 0.1 },
     });
     const res = await classifyContact(ai, { message: "x" });
     assert.equal(res.type, "unclassified");
@@ -45,7 +46,7 @@ describe("contact classifier (clef-flash)", () => {
 
   it("phishing answer -> phishing_scam, no email path", async () => {
     const ai = mockAI({
-      probabilities: { phishing_scam: 0.93, real_contact: 0.03, marketing: 0.02, bot_noise: 0.01, suspicious_language: 0.01 },
+      probabilities: { phishing_scam: 0.93, real_contact: 0.03, marketing: 0.02, spam: 0.01, suspicious_language: 0.01 },
     });
     const res = await classifyContact(ai, { message: "x" });
     assert.equal(res.type, "phishing_scam");
@@ -54,10 +55,28 @@ describe("contact classifier (clef-flash)", () => {
 
   it("other-language answer -> suspicious_language", async () => {
     const ai = mockAI({
-      probabilities: { suspicious_language: 0.88, real_contact: 0.07, marketing: 0.03, bot_noise: 0.02, phishing_scam: 0.0 },
+      probabilities: { suspicious_language: 0.88, real_contact: 0.07, marketing: 0.03, spam: 0.02, phishing_scam: 0.0 },
     });
     const res = await classifyContact(ai, { message: "x" });
     assert.equal(res.type, "suspicious_language");
+  });
+
+  it("spam wins but phishing close and above threshold -> escalates to phishing_scam", async () => {
+    const ai = mockAI({
+      probabilities: { spam: 0.7, phishing_scam: 0.62, real_contact: 0.0, marketing: 0.0, suspicious_language: 0.0 },
+    });
+    const res = await classifyContact(ai, { message: "x" });
+    assert.equal(res.type, "phishing_scam");
+    assert.equal(res.confidence, 0.62);
+    assert.match(res.reason, /preempção/);
+  });
+
+  it("spam wins with phishing far -> stays spam", async () => {
+    const ai = mockAI({
+      probabilities: { spam: 0.8, phishing_scam: 0.1, real_contact: 0.05, marketing: 0.03, suspicious_language: 0.02 },
+    });
+    const res = await classifyContact(ai, { message: "x" });
+    assert.equal(res.type, "spam");
   });
 
   it("sends state + typed question to clef-flash", async () => {
@@ -85,7 +104,7 @@ describe("contact classifier (clef-flash)", () => {
     for (const item of fixtures) {
       assert.ok(typeof item.message === "string" && item.message.length > 0);
       assert.ok(
-        ["real_contact", "marketing", "bot_noise", "phishing_scam", "suspicious_language"].includes(item.expected),
+        ["real_contact", "marketing", "spam", "phishing_scam", "suspicious_language"].includes(item.expected),
       );
     }
   });
