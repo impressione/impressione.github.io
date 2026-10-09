@@ -1,3 +1,7 @@
+function normalize(value) {
+  return typeof value === "string" ? value.trim() : "";
+}
+
 function buildEmailBody(fields) {
   const lines = [
     "Novo contato pelo formulario de impressione.me",
@@ -16,10 +20,6 @@ function buildEmailBody(fields) {
   return lines.join("\n");
 }
 
-function normalize(value) {
-  return typeof value === "string" ? value.trim() : "";
-}
-
 function sanitizeSubmission(body) {
   return {
     email: normalize(body?.email),
@@ -32,22 +32,20 @@ function sanitizeSubmission(body) {
   };
 }
 
-export default {
-  async queue(batch, env) {
-    for (const message of batch.messages) {
-      const submission = sanitizeSubmission(message.body);
+export async function handleQueue(batch, env) {
+  for (const message of batch.messages) {
+    const submission = sanitizeSubmission(message.body);
 
-      if (!submission.email) {
-        continue;
-      }
-
-      await env.EMAIL.send({
-        from: env.FROM_EMAIL,
-        to: env.TEAM_EMAIL,
-        subject: `Novo contato de ${submission.email}`,
-        text: buildEmailBody(submission),
-        replyTo: submission.email,
-      });
+    if (!submission.email) {
+      continue;
     }
-  },
-};
+
+    await env.EMAIL.send({
+      from: env.FROM_EMAIL,
+      to: env.TEAM_EMAIL,
+      subject: `Novo contato de ${submission.email}`,
+      text: buildEmailBody(submission),
+      replyTo: submission.email,
+    });
+  }
+}
