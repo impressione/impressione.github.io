@@ -24,9 +24,22 @@ describe("db schema", () => {
     const failing = { exec: async () => { calls++; throw new Error("d1 down"); } };
     await assert.rejects(() => ensureSchema(failing), /d1 down/);
 
-    const ok = { exec: async () => { calls++; } };
+    const received = [];
+    const ok = { exec: async (sql) => { calls++; received.push(sql); } };
     await ensureSchema(ok);
     await ensureSchema(ok);
-    assert.equal(calls, 2); // 1 falha + 1 sucesso (2ª chamada usa cache)
+    assert.equal(calls, 4); // 1 falha + 3 statements (2ª chamada usa cache)
+    assert.equal(received.length, 3);
+  });
+
+  it("exec receives single statements (D1 rejects multi-statement exec)", async () => {
+    _resetSchemaForTests();
+    const d1Like = {
+      exec: async (sql) => {
+        // Reproduz o comportamento real do D1 que quebrou produção.
+        if (sql.includes(";")) throw new Error("incomplete input: SQLITE_ERROR");
+      },
+    };
+    await ensureSchema(d1Like); // não deve lançar
   });
 });

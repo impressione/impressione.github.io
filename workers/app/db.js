@@ -3,6 +3,9 @@
 // (IF NOT EXISTS) e o resultado é cacheado por isolate. O teste
 // `db-schema.test.js` garante que este DDL é idêntico ao versionado em
 // `migrations/0001_contacts.sql` (usado pelo `db:migrate` manual/preview).
+//
+// Detalhe: `db.exec()` aceita UM statement por chamada — por isso o DDL é
+// dividido e executado statement a statement, em ordem.
 const SCHEMA_SQL = `
 CREATE TABLE IF NOT EXISTS contacts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -33,11 +36,22 @@ export function getSchemaSql() {
   return SCHEMA_SQL;
 }
 
+export function splitStatements(sql) {
+  return sql
+    .split(";")
+    .map((part) => part.trim())
+    .filter((part) => part.length > 0);
+}
+
 let schemaPromise = null;
 
 export function ensureSchema(db) {
   if (!schemaPromise) {
-    schemaPromise = db.exec(SCHEMA_SQL).catch((err) => {
+    schemaPromise = (async () => {
+      for (const statement of splitStatements(SCHEMA_SQL)) {
+        await db.exec(statement);
+      }
+    })().catch((err) => {
       schemaPromise = null;
       throw err;
     });
