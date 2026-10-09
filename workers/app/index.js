@@ -1,9 +1,59 @@
 import { handleContact } from "./contact-producer.js";
 import { handleQueue } from "./contact-consumer.js";
+import { queryPendingReview, buildDailySummaryEmail } from "./daily-summary.js";
+
+// ContactWorkflow mora em módulo próprio (importa "cloudflare:workers",
+// indisponível no node:test). Import dinâmico com fallback para os testes.
+let ContactWorkflow = class {};
+try {
+  ({ ContactWorkflow } = await import("./contact-workflow.js"));
+} catch {
+  // node:test — wiring do workflow validado em preview, não aqui.
+}
+
+export { ContactWorkflow };
+
+function utcDay(date = new Date()) {
+  return date.toISOString().slice(0, 10);
+}
+
+async function handleScheduled(env) {
+  const day = utcDay();
+  const guard = await env.DB.prepare(
+    "INSERT OR IGNORE INTO daily_summary (day, sent_at, counts) VALUES (?, ?, '{}')",
+  )
+    .bind(day, new Date().toISOString())
+    .run();
+
+  if (guard.meta.changes === 0) {
+    console.log(`Daily summary for ${day} already sent, skipping`);
+    return;
+  }
+
+  const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const { counts, items } = await queryPendingReview(env.DB, since);
+  const { subject, text } = buildDailySummaryEmail({ day, counts, items });
+
+  await env.EMAIL.send({
+    from: env.FROM_EMAIL,
+    to: env.TEAM_EMAIL,
+    subject,
+    text,
+    replyTo: env.FROM_EMAIL,
+  });
+
+  await env.DB.prepare("UPDATE daily_summary SET counts = ? WHERE day = ?")
+    .bind(JSON.stringify(counts), day)
+    .run();
+  console.log(`Daily summary sent for ${day}: ${subject}`);
+}
 
 export default {
   async queue(batch, env) {
     await handleQueue(batch, env);
+  },
+  async scheduled(event, env) {
+    await handleScheduled(env);
   },
   async fetch(request, env) {
     const url = new URL(request.url);

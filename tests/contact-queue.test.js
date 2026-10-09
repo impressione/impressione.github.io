@@ -2,48 +2,59 @@ import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import worker from "../workers/app/index.js";
 
-function mockEnv() {
-  const emails = [];
+function mockEnv({ changes = 1, rowid = 7 } = {}) {
+  const created = [];
   return {
     env: {
       FROM_EMAIL: "contato@impressione.me",
       TEAM_EMAIL: "contato@impressione.me",
-      EMAIL: { send: async (msg) => emails.push(msg) },
+      EMAIL: { send: async () => {} },
+      DB: {
+        prepare: () => ({
+          bind: () => ({
+            run: async () => ({ meta: { changes, last_row_rowid: rowid } }),
+          }),
+        }),
+      },
+      CONTACT_WORKFLOW: {
+        create: async (opts) => created.push(opts),
+      },
     },
-    emails,
+    created,
   };
 }
 
-const submission = {
+const body = {
   email: "a@b.com",
   name: "Ada",
   company: "Acme",
-  interest: "IA aplicada e automação",
-  message: "Vamos conversar.",
-  submittedAt: "2026-10-09T12:00:00.000Z",
+  interest: "X",
+  message: "oi",
+  submittedAt: "t",
   source: "website-contact-form",
 };
 
-describe("queue consumer", () => {
-  it("valid message -> email with replyTo and formatted body", async () => {
-    const { env, emails } = mockEnv();
-    await worker.queue({ messages: [{ body: submission }] }, env);
-    assert.equal(emails.length, 1);
-    assert.equal(emails[0].from, "contato@impressione.me");
-    assert.equal(emails[0].to, "contato@impressione.me");
-    assert.equal(emails[0].subject, "Novo contato de a@b.com");
-    assert.equal(emails[0].replyTo, "a@b.com");
-    assert.match(emails[0].text, /Email: a@b\.com/);
-    assert.match(emails[0].text, /Empresa: Acme/);
-    assert.match(emails[0].text, /Vamos conversar\./);
+describe("queue consumer (thin: dedupe + workflow.create)", () => {
+  it("new message -> saved + workflow instance created", async () => {
+    const { env, created } = mockEnv();
+    await worker.queue({ messages: [{ body }] }, env);
+    assert.equal(created.length, 1);
+    assert.equal(created[0].id, "contact-7");
+    assert.equal(created[0].params.contactId, 7);
+  });
+
+  it("duplicate delivery (changes=0) -> workflow NOT created", async () => {
+    const { env, created } = mockEnv({ changes: 0 });
+    await worker.queue({ messages: [{ body }] }, env);
+    assert.equal(created.length, 0);
   });
 
   it("missing email / null body -> skipped", async () => {
-    const { env, emails } = mockEnv();
+    const { env, created } = mockEnv();
     await worker.queue(
       { messages: [{ body: { email: "" } }, { body: null }] },
       env,
     );
-    assert.equal(emails.length, 0);
+    assert.equal(created.length, 0);
   });
 });

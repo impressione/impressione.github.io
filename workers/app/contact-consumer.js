@@ -2,7 +2,7 @@ function normalize(value) {
   return typeof value === "string" ? value.trim() : "";
 }
 
-function buildEmailBody(fields) {
+export function buildEmailBody(fields) {
   const lines = [
     "Novo contato pelo formulario de impressione.me",
     "",
@@ -20,7 +20,7 @@ function buildEmailBody(fields) {
   return lines.join("\n");
 }
 
-function sanitizeSubmission(body) {
+export function sanitizeSubmission(body) {
   return {
     email: normalize(body?.email),
     name: normalize(body?.name),
@@ -32,6 +32,18 @@ function sanitizeSubmission(body) {
   };
 }
 
+export async function sendNewContactEmail(env, contact, subject) {
+  await env.EMAIL.send({
+    from: env.FROM_EMAIL,
+    to: env.TEAM_EMAIL,
+    subject: subject ?? `Novo contato de ${contact.email}`,
+    text: buildEmailBody(contact),
+    replyTo: contact.email,
+  });
+}
+
+// Consumer fino: dedupe + dispara 1 instância do workflow por contato.
+// O processamento durável (classificar → rotear) mora no ContactWorkflow.
 export async function handleQueue(batch, env) {
   for (const message of batch.messages) {
     const submission = sanitizeSubmission(message.body);
@@ -40,12 +52,32 @@ export async function handleQueue(batch, env) {
       continue;
     }
 
-    await env.EMAIL.send({
-      from: env.FROM_EMAIL,
-      to: env.TEAM_EMAIL,
-      subject: `Novo contato de ${submission.email}`,
-      text: buildEmailBody(submission),
-      replyTo: submission.email,
+    const inserted = await env.DB.prepare(
+      `INSERT OR IGNORE INTO contacts
+       (email, name, company, interest, message, submittedAt, source)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    )
+      .bind(
+        submission.email,
+        submission.name,
+        submission.company,
+        submission.interest,
+        submission.message,
+        submission.submittedAt,
+        submission.source || "website-contact-form",
+      )
+      .run();
+
+    if (inserted.meta.changes === 0) {
+      console.log("Duplicate delivery, skipping workflow");
+      continue;
+    }
+
+    const contactId = inserted.meta.last_row_rowid;
+    await env.CONTACT_WORKFLOW.create({
+      id: `contact-${contactId}`,
+      params: { contactId },
     });
+    console.log(`Workflow started for contact ${contactId}`);
   }
 }

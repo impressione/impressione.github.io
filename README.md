@@ -1,13 +1,14 @@
 # impressione.me
 
 Site institucional da Impressione (`https://impressione.me`): Astro estático
-servido por um Cloudflare Worker, com formulário de contato que enfileira
-mensagens e notifica o time por e-mail.
+servido por um Cloudflare Worker, com formulário de contato que salva em D1,
+classifica com AI (clef-flash) e notifica o time — resumo diário do resto.
 
 ```
-Browser --POST /api/contact--> Worker (fetch) --> Fila --> Worker (queue) --> E-mail
-                                  |                                    ^
-                                  +---- assets ./dist (site) -----------+
+Browser --POST /api/contact--> Worker (fetch) --> Fila --> Workflow: D1 -> clef -> email
+                                  |                                              ^
+                                  +---- assets ./dist (site) --------------------+
+Cron 12:00 UTC --> Worker (scheduled) --> resumo diário --> E-mail
 ```
 
 ## Pré-requisitos
@@ -38,10 +39,13 @@ curl -X POST -F "email=a@b.com" -F "website=" localhost:8787/api/contact
 ```
 src/pages/           Páginas Astro (index, contato, contato/obrigado, contato/falha)
 public/              Arquivos estáticos (+ .assetsignore do Worker)
-workers/app/         Worker único: index.js (entrypoint fetch + queue),
+workers/app/         Worker único: index.js (fetch + queue fino + scheduled),
                      contact-producer.js (form -> fila),
-                     contact-consumer.js (fila -> e-mail), wrangler.jsonc
-tests/               Testes unitários do Worker
+                     contact-consumer.js (dedupe -> workflow),
+                     contact-classifier.js (clef-flash),
+                     contact-workflow.js (D1 -> classifica -> roteia),
+                     daily-summary.js (resumo), migrations/, wrangler.jsonc
+tests/               Testes unitários + fixtures do golden set
 dist/                Build (gerado, gitignored)
 ```
 
@@ -49,12 +53,14 @@ dist/                Build (gerado, gitignored)
 
 1. Form em `/contato` faz `POST /api/contact` (`email` obrigatório, campo
    oculto `website` como honeypot).
-2. Worker valida e publica `{email, name, company, interest, message,
-   submittedAt}` na fila `impressione-me-contact` → `303 /contato/obrigado`
-   (falha de validação → `303 /contato/falha`; honeypot preenchido finge
-   sucesso sem enfileirar).
-3. Consumer da mesma fila monta o e-mail (`from/to = contato@impressione.me`,
-   `replyTo` = visitante) e envia via binding `send_email`.
+2. Worker valida e publica na fila `impressione-me-contact` (auto-provisionada
+   no primeiro deploy) → `303 /contato/obrigado` (falha → `/contato/falha`;
+   honeypot finge sucesso sem enfileirar).
+3. Consumer salva no D1 (`INSERT OR IGNORE`) e dispara 1 `ContactWorkflow`.
+4. Workflow classifica com clef-flash (`real_contact` | `marketing` |
+   `bot_noise`; erro ou confiança < 0.6 → `unclassified`, sem e-mail).
+5. `real_contact` → e-mail imediato. Demais → resumo diário (cron 12:00 UTC
+   = 09h BRT) com contagens + top 20.
 
 ## Deploy
 
@@ -62,12 +68,15 @@ Automático via **Workers Builds** (1 projeto `impressione-me` ligado ao repo):
 
 | Root directory | Build command | Deploy command |
 |---|---|---|
-| `/` (raiz) | `npm run build` | `npx wrangler deploy` |
+| `/` (raiz) | `npm run build && npx wrangler d1 migrations apply impressione-contacts --remote` | `npx wrangler deploy` |
 
 Preview por PR ativo (`preview_urls: true`). Manual: `npm run deploy`.
-Recursos criados uma vez, fora do deploy: fila `impressione-me-contact`
-(Terraform no repo `infrastructure`, módulo `cloudflare-workers`) e os
-Custom Domains `impressione.me` + `www` no Worker.
+Setup uma vez, fora do deploy:
+1. `wrangler d1 create impressione-contacts` → colar o `database_id` no
+   `wrangler.jsonc` (hoje placeholder).
+2. Custom Domains `impressione.me` + `www` no Worker (Terraform, repo infra).
+3. Checar plano do clef-flash: 1 chamada em preview; `403`/erro `5035`
+   significa que exige Workers Paid ($5/mês).
 
 ## Relação com o repo de infra
 
