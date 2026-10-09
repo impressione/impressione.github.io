@@ -57,10 +57,11 @@ dist/                Build (gerado, gitignored)
    no primeiro deploy) → `303 /contato/obrigado` (falha → `/contato/falha`;
    honeypot finge sucesso sem enfileirar).
 3. Consumer salva no D1 (`INSERT OR IGNORE`) e dispara 1 `ContactWorkflow`.
-4. Workflow classifica com clef-flash (`real_contact` | `marketing` |
-   `bot_noise` | `phishing_scam` | `suspicious_language` — este último para
-   qualquer idioma fora de PT/EN; erro ou confiança < 0.6 → `unclassified`,
-   sem e-mail).
+4. Workflow classifica com clef-flash em 2 perguntas: `tipo` (`real_contact` |
+   `marketing` | `phishing_scam` | `spam`, com preempção phishing > spam) e
+   `idioma` (PT | EN | outro — conteúdo real em outro idioma vira
+   `suspicious_language`). Erro ou confiança < 0.6 → `unclassified`,
+   sem e-mail.
 5. `real_contact` → e-mail imediato. Demais → resumo diário (cron 12:00 UTC
    = 09h BRT) com contagens + top 20.
 

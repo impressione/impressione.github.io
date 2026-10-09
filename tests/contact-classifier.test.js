@@ -79,6 +79,51 @@ describe("contact classifier (clef-flash)", () => {
     assert.equal(res.type, "spam");
   });
 
+  function mockBilingual(tipoProbs, idiomaProbs) {
+    return {
+      run: async () => ({
+        answers: { tipo: { probabilities: tipoProbs }, idioma: { probabilities: idiomaProbs } },
+      }),
+    };
+  }
+
+  it("real content in other language -> suspicious_language (caso igbo)", async () => {
+    const ai = mockBilingual(
+      { real_contact: 0.65, marketing: 0.03, phishing_scam: 0.05, spam: 0.07, suspicious_language: 0.19 },
+      { other: 0.9, portuguese: 0.05, english: 0.05 },
+    );
+    const res = await classifyContact(ai, { message: "Ndewo, achọrọ m ịmara ọnụahịa gị." });
+    assert.equal(res.type, "suspicious_language");
+    assert.notEqual(res.type, "real_contact");
+  });
+
+  it("phishing in other language -> stays phishing_scam (mais específico)", async () => {
+    const ai = mockBilingual(
+      { phishing_scam: 0.85, spam: 0.1, real_contact: 0.02, marketing: 0.02, suspicious_language: 0.01 },
+      { other: 0.95, portuguese: 0.02, english: 0.03 },
+    );
+    const res = await classifyContact(ai, { message: "x" });
+    assert.equal(res.type, "phishing_scam");
+  });
+
+  it("real content in PT/EN -> stays real_contact", async () => {
+    const ai = mockBilingual(
+      { real_contact: 0.91, marketing: 0.06, spam: 0.03 },
+      { portuguese: 0.97, english: 0.02, other: 0.01 },
+    );
+    const res = await classifyContact(ai, { message: "x" });
+    assert.equal(res.type, "real_contact");
+  });
+
+  it("weak other-language signal -> keeps tipo (sem flip por ruído)", async () => {
+    const ai = mockBilingual(
+      { real_contact: 0.85, marketing: 0.1, spam: 0.05 },
+      { other: 0.3, portuguese: 0.6, english: 0.1 },
+    );
+    const res = await classifyContact(ai, { message: "x" });
+    assert.equal(res.type, "real_contact");
+  });
+
   it("sends state + typed question to clef-flash", async () => {
     const calls = [];
     const ai = {
