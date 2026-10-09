@@ -1,5 +1,6 @@
 import { handleContact } from "./contact-producer.js";
 import { handleQueue } from "./contact-consumer.js";
+import { ensureSchema } from "./db.js";
 import { queryPendingReview, buildDailySummaryEmail } from "./daily-summary.js";
 
 // ContactWorkflow mora em módulo próprio (importa "cloudflare:workers",
@@ -18,6 +19,8 @@ function utcDay(date = new Date()) {
 }
 
 async function handleScheduled(env) {
+  await ensureSchema(env.DB);
+
   const day = utcDay();
   const guard = await env.DB.prepare(
     "INSERT OR IGNORE INTO daily_summary (day, sent_at, counts) VALUES (?, ?, '{}')",

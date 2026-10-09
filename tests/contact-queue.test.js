@@ -1,6 +1,9 @@
-import { describe, it } from "node:test";
+import { describe, it, beforeEach } from "node:test";
 import assert from "node:assert/strict";
 import worker from "../workers/app/index.js";
+import { _resetSchemaForTests } from "../workers/app/db.js";
+
+beforeEach(() => _resetSchemaForTests());
 
 function mockEnv({ changes = 1, rowid = 7 } = {}) {
   const created = [];
@@ -10,6 +13,7 @@ function mockEnv({ changes = 1, rowid = 7 } = {}) {
       TEAM_EMAIL: "contato@impressione.me",
       EMAIL: { send: async () => {} },
       DB: {
+        exec: async () => {},
         prepare: () => ({
           bind: () => ({
             run: async () => ({ meta: { changes, last_row_rowid: rowid } }),

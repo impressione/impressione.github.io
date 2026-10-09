@@ -68,9 +68,12 @@ Automático via **Workers Builds** (1 projeto `impressione-me` ligado ao repo):
 
 | Root directory | Build command | Deploy command |
 |---|---|---|
-| `/` (raiz) | `npm run build && npx wrangler d1 migrations apply impressione-me-db --remote` | `npx wrangler deploy` |
+| `/` (raiz) | `npm run build` | `npx wrangler deploy` |
 
 Preview por PR ativo (`preview_urls: true`). Manual: `npm run deploy`.
+O schema do D1 é garantido em runtime pelo próprio Worker (`db.js`, a partir
+do mesmo DDL versionado em `workers/app/migrations/`) — dispensa `migrate`
+no deploy. `npm run db:migrate` continua disponível para uso manual/preview.
 Setup uma vez, fora do deploy:
 1. Nada para o D1 de produção: o primeiro deploy auto-provisiona o banco
    `impressione-me-db` a partir do binding; o DDL entra pelo `db:migrate`
