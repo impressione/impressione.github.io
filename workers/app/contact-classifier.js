@@ -6,7 +6,13 @@ export const CLASSIFIER_MODEL = "@cf/cloudflare/clef-flash";
 export const CLASSIFIER_MODEL_ID = "clef-flash";
 export const CONFIDENCE_THRESHOLD = 0.6;
 
-export const CONTACT_TYPES = ["real_contact", "marketing", "bot_noise"];
+export const CONTACT_TYPES = [
+  "real_contact",
+  "marketing",
+  "bot_noise",
+  "phishing_scam",
+  "suspicious_language",
+];
 
 function breakdown(probs) {
   return CONTACT_TYPES.map((t) => `${t} ${Number(probs[t] ?? 0).toFixed(2)}`).join(" / ");
@@ -55,11 +61,13 @@ export async function classifyContact(ai, submission) {
         tipo: {
           type: "choice",
           instructions:
-            "Classifique a mensagem do formulário de contato de uma consultoria de software.",
+            "Classifique a mensagem do formulário de contato de uma consultoria de software brasileira. O site opera em português e inglês.",
           criteria: {
-            real_contact: "Pedido legítimo de projeto, orçamento ou conversa sobre software",
+            real_contact: "Pedido legítimo de projeto, orçamento ou conversa sobre software, em português ou inglês",
             marketing: "Oferta de serviços ao site (SEO, tráfego, listas, parcerias comerciais)",
-            bot_noise: "Texto sem sentido, teste, spam genérico ou links suspeitos",
+            bot_noise: "Texto sem sentido, teste ou spam genérico",
+            phishing_scam: "Tentativa de golpe: urgência falsa, conta bloqueada, prêmio, pedido de dados/senha/pagamento, links suspeitos",
+            suspicious_language: "Mensagem em qualquer idioma que não seja português ou inglês, mesmo que pareça legítima",
           },
         },
       },

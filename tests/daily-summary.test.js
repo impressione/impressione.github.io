@@ -22,19 +22,20 @@ describe("daily summary", () => {
   it("builds subject + body with counts and items", () => {
     const { subject, text } = buildDailySummaryEmail({
       day: "2026-10-10",
-      counts: { marketing: 2, bot_noise: 1, unclassified: 1 },
+      counts: { marketing: 2, bot_noise: 1, phishing_scam: 1, suspicious_language: 1, unclassified: 1 },
       items: [
         {
           submittedAt: "t", email: "a@b.com", name: "A",
-          classification: "marketing", confidence: 0.9,
-          reason: "", excerpt: "oferta de seo",
+          classification: "phishing_scam", confidence: 0.93,
+          reason: "", excerpt: "conta bloqueada",
         },
       ],
     });
     assert.match(subject, /2 mkt/);
-    assert.match(text, /Marketing: 2/);
+    assert.match(subject, /1 phishing/);
+    assert.match(subject, /1 idioma/);
     assert.match(text, /a@b\.com/);
-    assert.match(text, /oferta de seo/);
+    assert.match(text, /conta bloqueada/);
   });
 
   it("empty day -> heartbeat body, real contacts excluded by query", async () => {

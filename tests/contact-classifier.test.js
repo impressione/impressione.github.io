@@ -43,6 +43,23 @@ describe("contact classifier (clef-flash)", () => {
     assert.equal(res.type, "unclassified");
   });
 
+  it("phishing answer -> phishing_scam, no email path", async () => {
+    const ai = mockAI({
+      probabilities: { phishing_scam: 0.93, real_contact: 0.03, marketing: 0.02, bot_noise: 0.01, suspicious_language: 0.01 },
+    });
+    const res = await classifyContact(ai, { message: "x" });
+    assert.equal(res.type, "phishing_scam");
+    assert.notEqual(res.type, "real_contact");
+  });
+
+  it("other-language answer -> suspicious_language", async () => {
+    const ai = mockAI({
+      probabilities: { suspicious_language: 0.88, real_contact: 0.07, marketing: 0.03, bot_noise: 0.02, phishing_scam: 0.0 },
+    });
+    const res = await classifyContact(ai, { message: "x" });
+    assert.equal(res.type, "suspicious_language");
+  });
+
   it("sends state + typed question to clef-flash", async () => {
     const calls = [];
     const ai = {
@@ -67,7 +84,9 @@ describe("contact classifier (clef-flash)", () => {
     assert.ok(fixtures.length >= 6);
     for (const item of fixtures) {
       assert.ok(typeof item.message === "string" && item.message.length > 0);
-      assert.ok(["real_contact", "marketing", "bot_noise"].includes(item.expected));
+      assert.ok(
+        ["real_contact", "marketing", "bot_noise", "phishing_scam", "suspicious_language"].includes(item.expected),
+      );
     }
   });
 });
