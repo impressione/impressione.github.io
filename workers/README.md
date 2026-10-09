@@ -19,9 +19,10 @@ workers/
   `wrangler.jsonc` e o deploy passa a usar `-c`.
 - Código compartilhado (schema da mensagem da fila, validação) vai para
   `workers/shared/` quando o segundo uso aparecer — não antes.
-- Recursos compartilhados (fila `impressione-me-contact`, futura tabela D1)
-  são gerenciados via Terraform no repo `infrastructure` e referenciados
-  pelos bindings.
+- Recursos compartilhados: a fila `impressione-me-contact` é
+  auto-provisionada pelo Wrangler no primeiro deploy a partir dos bindings
+  (produtor + consumidor); DNS, R2 e OCI seguem via Terraform no repo
+  `infrastructure`.
 
 ## Deploy (Workers Builds)
 
