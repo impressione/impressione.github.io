@@ -59,47 +59,57 @@ function bestOption(answer, types = CONTACT_TYPES) {
 
 export async function classifyContact(ai, submission) {
   try {
-    const response = await ai.run(CLASSIFIER_MODEL, {
-      model: CLASSIFIER_MODEL_ID,
-      state: {
-        name: submission.name,
-        company: submission.company,
-        interest: submission.interest,
-        message: submission.message,
-      },
-      questions: {
-        tipo: {
-          type: "choice",
-          instructions:
-            "Classifique o CONTEÚDO da mensagem do formulário de contato de uma consultoria de software, ignorando o idioma (o idioma é avaliado em pergunta separada).",
-          criteria: {
-            real_contact: "Pedido legítimo de projeto, orçamento ou conversa sobre software",
-            marketing: "Oferta de serviços ao site (SEO, tráfego, listas, parcerias comerciais)",
-            phishing_scam: "Tentativa de golpe: urgência falsa, conta bloqueada, prêmio, pedido de dados/senha/pagamento, links suspeitos. Em dúvida entre spam e phishing, prefira phishing_scam",
-            spam: "Lixo genérico sem tentativa clara de golpe: testes, gibberish, link dumps. Prioridade menor que phishing_scam",
-            suspicious_language: "Apenas se nada acima se aplicar e o texto claramente não for português nem inglês",
+    // Duas chamadas independentes (paralelas): o idioma avalia SÓ `message`
+    // — name/company e principalmente `interest` (select sempre em PT)
+    // viciariam a detecção para português.
+    const [tipoRes, idiomaRes] = await Promise.all([
+      ai.run(CLASSIFIER_MODEL, {
+        model: CLASSIFIER_MODEL_ID,
+        state: {
+          name: submission.name,
+          company: submission.company,
+          interest: submission.interest,
+          message: submission.message,
+        },
+        questions: {
+          tipo: {
+            type: "choice",
+            instructions:
+              "Classifique o CONTEÚDO da mensagem do formulário de contato de uma consultoria de software.",
+            criteria: {
+              real_contact: "Pedido legítimo de projeto, orçamento ou conversa sobre software",
+              marketing: "Oferta de serviços ao site (SEO, tráfego, listas, parcerias comerciais)",
+              phishing_scam: "Tentativa de golpe: urgência falsa, conta bloqueada, prêmio, pedido de dados/senha/pagamento, links suspeitos. Em dúvida entre spam e phishing, prefira phishing_scam",
+              spam: "Lixo genérico sem tentativa clara de golpe: testes, gibberish, link dumps. Prioridade menor que phishing_scam",
+              suspicious_language: "Apenas se nada acima se aplicar e o texto claramente não for português nem inglês",
+            },
           },
         },
-        idioma: {
-          type: "choice",
-          instructions: "Identifique APENAS o idioma do texto, ignorando o conteúdo.",
-          criteria: {
-            portuguese: "Texto em português",
-            english: "Texto em inglês",
-            other: "Texto em qualquer outro idioma",
+      }),
+      ai.run(CLASSIFIER_MODEL, {
+        model: CLASSIFIER_MODEL_ID,
+        state: { message: submission.message },
+        questions: {
+          idioma: {
+            type: "choice",
+            instructions: "Identifique o idioma do texto.",
+            criteria: {
+              portuguese: "Texto em português",
+              english: "Texto em inglês",
+              other: "Texto em qualquer outro idioma",
+            },
           },
         },
-      },
-    });
+      }),
+    ]);
 
-    const answers = response?.answers ?? {};
-    const best = bestOption(answers.tipo);
+    const best = bestOption(tipoRes?.answers?.tipo);
     if (!best || !Number.isFinite(best.probability)) {
       return { type: "unclassified", confidence: 0, reason: "clef-answer-unparseable" };
     }
-    const probs = answers.tipo.probabilities ?? {};
-    const langBest = bestOption(answers.idioma, LANGUAGE_TYPES);
-    const langProbs = answers.idioma?.probabilities ?? {};
+    const probs = tipoRes?.answers?.tipo?.probabilities ?? {};
+    const langBest = bestOption(idiomaRes?.answers?.idioma, LANGUAGE_TYPES);
+    const langProbs = idiomaRes?.answers?.idioma?.probabilities ?? {};
     // O clef não justifica em texto — o "motivo" é o placar completo.
     let { option, probability } = best;
     let reason = `tipo: ${breakdown(probs)} | idioma: ${LANGUAGE_TYPES.map((t) => `${t} ${Number(langProbs[t] ?? 0).toFixed(2)}`).join(" / ")}`;
