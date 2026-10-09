@@ -16,55 +16,54 @@ function readSubmission(formData) {
 
 function validateSubmission(submission) {
   if (!submission.email) {
-    return "O e-mail e obrigatorio.";
+    return "O e-mail é obrigatório.";
   }
 
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailPattern.test(submission.email)) {
-    return "Informe um e-mail valido.";
+    return "Informe um e-mail válido.";
   }
 
   return null;
 }
 
-export async function onRequestOptions() {
+function redirect(path) {
   return new Response(null, {
-    status: 204,
-    headers: {
-      Allow: "POST, OPTIONS",
-    },
+    status: 303,
+    headers: { Location: path },
   });
 }
 
-export async function onRequestPost(context) {
+export async function handleContact(request, env) {
   console.log("Received contact form submission");
-  const contentType = context.request.headers.get("content-type") || "";
+  const contentType = request.headers.get("content-type") || "";
   if (
     !contentType.includes("multipart/form-data") &&
     !contentType.includes("application/x-www-form-urlencoded")
   ) {
-    return new Response(null, {
-      status: 303,
-      headers: { Location: "/contato/falha" },
-    });
+    return redirect("/contato/falha");
   }
 
   console.log("Parsing form data");
-  const formData = await context.request.formData();
-
+  const formData = await request.formData();
   const submission = readSubmission(formData);
-  console.log("Submission data:", submission);
+
+  // Honeypot anti-spam: bots preenchem o campo oculto `website`.
+  // Finge sucesso sem enfileirar para não sinalizar a armadilha.
+  if (submission.website) {
+    console.log("Honeypot filled, dropping submission silently");
+    return redirect("/contato/obrigado");
+  }
+
   const validationError = validateSubmission(submission);
   console.log("Validation result:", validationError || "valid");
 
   if (validationError) {
-    return new Response(null, {
-      status: 303,
-      headers: { Location: "/contato/falha" },
-    });
+    return redirect("/contato/falha");
   }
+
   console.log("Sending submission to queue");
-  await context.env.CONTACT_QUEUE.send({
+  await env.CONTACT_QUEUE.send({
     email: submission.email,
     name: submission.name,
     company: submission.company,
@@ -74,8 +73,5 @@ export async function onRequestPost(context) {
     source: "website-contact-form",
   });
   console.log("Submission sent to queue successfully");
-  return new Response(null, {
-    status: 303,
-    headers: { Location: "/contato/obrigado" },
-  });
+  return redirect("/contato/obrigado");
 }

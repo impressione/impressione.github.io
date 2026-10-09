@@ -1,0 +1,43 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "impressione-me",
+  "compatibility_date": "2026-10-09",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "./workers/app/index.js",
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "queues": {
+    "producers": [
+      {
+        "binding": "CONTACT_QUEUE",
+        "queue": "impressione-me-contact"
+      }
+    ],
+    "consumers": [
+      {
+        "queue": "impressione-me-contact",
+        "max_batch_size": 10,
+        "max_batch_timeout": 5,
+        "max_concurrency": 5,
+        "max_retries": 3,
+        "retry_delay": 10
+      }
+    ]
+  },
+  "vars": {
+    "FROM_EMAIL": "contato@impressione.me",
+    "TEAM_EMAIL": "contato@impressione.me"
+  },
+  "send_email": [
+    {
+      "name": "EMAIL"
+    }
+  ],
+  "preview_urls": true
+}
