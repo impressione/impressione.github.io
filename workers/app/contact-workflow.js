@@ -47,20 +47,9 @@ export class ContactWorkflow extends WorkflowEntrypoint {
       return { emailed: true, type: cls.type };
     }
 
-    // Fail-closed com saída: dorme até 20h aguardando aprovação manual.
-    // Sem aprovação, o timeout cai no resumo diário (v1: sem endpoint ainda).
-    try {
-      await step.waitForEvent("review-approved", { timeout: "20 hours" });
-      await step.do("notify-late", () =>
-        sendNewContactEmail(
-          this.env,
-          contact,
-          `Contato aprovado (revisão): ${contact.email}`,
-        ),
-      );
-      return { emailed: true, type: cls.type, via: "manual-review" };
-    } catch {
-      return { emailed: false, type: cls.type, via: "daily-summary" };
-    }
+    // Não-real: encerra aqui; o contato aparece no resumo diário (cron).
+    // (Sem superfície de aprovação, waitForEvent só suspenderia a instância
+    // por 20h para cair no mesmo caminho — removido.)
+    return { emailed: false, type: cls.type, via: "daily-summary" };
   }
 }

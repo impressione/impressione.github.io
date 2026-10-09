@@ -25,14 +25,14 @@
     "company": "LinkBuilding Pro",
     "interest": "Novo produto ou sistema",
     "message": "CHECK OUT http://cheap-links.example BEST PRICES buy now!!!",
-    "expected": "bot_noise"
+    "expected": "spam"
   },
   {
     "name": "asdf",
     "company": "qwer",
     "interest": "IA aplicada e automação",
     "message": "teste 123",
-    "expected": "bot_noise"
+    "expected": "spam"
   },
   {
     "name": "Paula Mendes",

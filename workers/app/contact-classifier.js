@@ -9,10 +9,14 @@ export const CONFIDENCE_THRESHOLD = 0.6;
 export const CONTACT_TYPES = [
   "real_contact",
   "marketing",
-  "bot_noise",
   "phishing_scam",
+  "spam",
   "suspicious_language",
 ];
+
+// `spam` tem prioridade menor que `phishing_scam`: vencendo por pouco,
+// com phishing próximo, escala para phishing (golpe é o erro mais caro).
+export const PHISHING_ESCALATION_MARGIN = 0.15;
 
 function breakdown(probs) {
   return CONTACT_TYPES.map((t) => `${t} ${Number(probs[t] ?? 0).toFixed(2)}`).join(" / ");
@@ -65,8 +69,8 @@ export async function classifyContact(ai, submission) {
           criteria: {
             real_contact: "Pedido legítimo de projeto, orçamento ou conversa sobre software, em português ou inglês",
             marketing: "Oferta de serviços ao site (SEO, tráfego, listas, parcerias comerciais)",
-            bot_noise: "Texto sem sentido, teste ou spam genérico",
-            phishing_scam: "Tentativa de golpe: urgência falsa, conta bloqueada, prêmio, pedido de dados/senha/pagamento, links suspeitos",
+            phishing_scam: "Tentativa de golpe: urgência falsa, conta bloqueada, prêmio, pedido de dados/senha/pagamento, links suspeitos. Em dúvida entre spam e phishing, prefira phishing_scam",
+            spam: "Lixo genérico sem tentativa clara de golpe: testes, gibberish, link dumps. Prioridade menor que phishing_scam",
             suspicious_language: "Mensagem em qualquer idioma que não seja português ou inglês, mesmo que pareça legítima",
           },
         },
@@ -77,14 +81,24 @@ export async function classifyContact(ai, submission) {
     if (!best || !Number.isFinite(best.probability)) {
       return { type: "unclassified", confidence: 0, reason: "clef-answer-unparseable" };
     }
-    if (best.probability < CONFIDENCE_THRESHOLD) {
-      return {
-        type: "unclassified",
-        confidence: best.probability,
-        reason: `low-confidence: ${breakdown(response.answers.tipo.probabilities ?? {})}`,
-      };
+    const probs = response.answers.tipo.probabilities ?? {};
+    // O clef não justifica em texto — o "motivo" é o placar completo.
+    let { option, probability } = best;
+    let reason = breakdown(probs);
+    const phishingProb = Number(probs.phishing_scam ?? NaN);
+    if (
+      option === "spam" &&
+      Number.isFinite(phishingProb) &&
+      phishingProb >= probability - PHISHING_ESCALATION_MARGIN
+    ) {
+      option = "phishing_scam";
+      probability = phishingProb;
+      reason += " (preempção: phishing > spam)";
     }
-    return { type: best.option, confidence: best.probability, reason: "" };
+    if (probability < CONFIDENCE_THRESHOLD) {
+      return { type: "unclassified", confidence: probability, reason: `low-confidence: ${reason}` };
+    }
+    return { type: option, confidence: probability, reason };
   } catch (err) {
     return {
       type: "unclassified",
