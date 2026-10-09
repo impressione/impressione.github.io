@@ -4,8 +4,8 @@
 // `db-schema.test.js` garante que este DDL é idêntico ao versionado em
 // `migrations/0001_contacts.sql` (usado pelo `db:migrate` manual/preview).
 //
-// Detalhe: `db.exec()` aceita UM statement por chamada — por isso o DDL é
-// dividido e executado statement a statement, em ordem.
+// Detalhe: usa `db.batch()` de prepared statements — o mecanismo documentado
+// para múltiplos statements (`db.exec()` rejeitou o DDL em produção).
 const SCHEMA_SQL = `
 CREATE TABLE IF NOT EXISTS contacts (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -47,14 +47,12 @@ let schemaPromise = null;
 
 export function ensureSchema(db) {
   if (!schemaPromise) {
-    schemaPromise = (async () => {
-      for (const statement of splitStatements(SCHEMA_SQL)) {
-        await db.exec(statement);
-      }
-    })().catch((err) => {
-      schemaPromise = null;
-      throw err;
-    });
+    schemaPromise = db
+      .batch(splitStatements(SCHEMA_SQL).map((statement) => db.prepare(statement)))
+      .catch((err) => {
+        schemaPromise = null;
+        throw err;
+      });
   }
   return schemaPromise;
 }
