@@ -12,13 +12,15 @@ function mockAI(answer) {
 }
 
 describe("contact classifier (clef-flash)", () => {
-  it("high-confidence choice -> type with confidence", async () => {
+  it("high-confidence choice -> type with confidence + probs breakdown as reason", async () => {
     const ai = mockAI({
       probabilities: { real_contact: 0.91, marketing: 0.06, bot_noise: 0.03 },
     });
     const res = await classifyContact(ai, { message: "x" });
     assert.equal(res.type, "real_contact");
     assert.equal(res.confidence, 0.91);
+    assert.match(res.reason, /real_contact 0\.91/);
+    assert.match(res.reason, /marketing 0\.06/);
   });
 
   it("below threshold -> unclassified (fail-closed)", async () => {

@@ -77,14 +77,16 @@ export async function classifyContact(ai, submission) {
     if (!best || !Number.isFinite(best.probability)) {
       return { type: "unclassified", confidence: 0, reason: "clef-answer-unparseable" };
     }
+    // O clef não justifica em texto — o "motivo" é o placar completo.
+    const reason = `probs: ${breakdown(response.answers.tipo.probabilities ?? {})}`;
     if (best.probability < CONFIDENCE_THRESHOLD) {
       return {
         type: "unclassified",
         confidence: best.probability,
-        reason: `low-confidence: ${breakdown(response.answers.tipo.probabilities ?? {})}`,
+        reason: `low-confidence: ${reason}`,
       };
     }
-    return { type: best.option, confidence: best.probability, reason: "" };
+    return { type: best.option, confidence: best.probability, reason };
   } catch (err) {
     return {
       type: "unclassified",
