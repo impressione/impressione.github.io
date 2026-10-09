@@ -129,7 +129,7 @@ describe("contact classifier (clef-flash)", () => {
     const ai = {
       run: async (model, input) => {
         calls.push([model, input]);
-        return { answers: { tipo: { probabilities: { marketing: 0.99, real_contact: 0.01, spam: 0.0 } } } };
+        return { answers: { tipo: { probabilities: { spam: 0.99, real_contact: 0.01, phishing_scam: 0.0 } } } };
       },
     };
     const submission = { name: "N", company: "C", interest: "Arquitetura e reestruturação técnica", message: "M" };
@@ -141,7 +141,7 @@ describe("contact classifier (clef-flash)", () => {
     assert.deepEqual(Object.keys(calls[0][1].questions.tipo.criteria).sort(), [...CONTACT_TYPES].sort());
     assert.deepEqual(calls[1][1].state, { message: "M" });
     assert.deepEqual(Object.keys(calls[1][1].questions), ["idioma"]);
-    assert.equal(res.type, "marketing");
+    assert.equal(res.type, "spam");
   });
 
   it("golden fixtures stay well-formed", async () => {
@@ -152,7 +152,7 @@ describe("contact classifier (clef-flash)", () => {
     for (const item of fixtures) {
       assert.ok(typeof item.message === "string" && item.message.length > 0);
       assert.ok(
-        ["real_contact", "marketing", "spam", "phishing_scam", "suspicious_language"].includes(item.expected),
+        ["real_contact", "spam", "phishing_scam", "suspicious_language"].includes(item.expected),
       );
     }
   });

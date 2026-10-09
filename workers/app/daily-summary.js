@@ -30,7 +30,6 @@ export async function queryPendingReview(db, sinceIso) {
 
 const TYPE_LABELS = {
   real_contact: "reais",
-  marketing: "mkt",
   spam: "spam",
   phishing_scam: "phishing",
   suspicious_language: "idioma",

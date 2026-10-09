@@ -58,7 +58,7 @@ dist/                Build (gerado, gitignored)
    honeypot finge sucesso sem enfileirar).
 3. Consumer salva no D1 (`INSERT OR IGNORE`) e dispara 1 `ContactWorkflow`.
 4. Workflow classifica com clef-flash em 2 perguntas: `tipo` (`real_contact` |
-   `marketing` | `phishing_scam` | `spam`, com preempção phishing > spam) e
+   `phishing_scam` | `spam`, com preempção phishing > spam) e
    `idioma` (PT | EN | outro — conteúdo real em outro idioma vira
    `suspicious_language`). Erro ou confiança < 0.6 → `unclassified`,
    sem e-mail.
