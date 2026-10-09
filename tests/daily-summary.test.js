@@ -22,7 +22,7 @@ describe("daily summary", () => {
   it("builds subject + body with counts and items", () => {
     const { subject, text } = buildDailySummaryEmail({
       day: "2026-10-10",
-      counts: { marketing: 2, bot_noise: 1, phishing_scam: 1, suspicious_language: 1, unclassified: 1 },
+      counts: { spam: 2, phishing_scam: 1, suspicious_language: 1, unclassified: 1 },
       items: [
         {
           submittedAt: "t", email: "a@b.com", name: "A",
@@ -31,7 +31,7 @@ describe("daily summary", () => {
         },
       ],
     });
-    assert.match(subject, /2 mkt/);
+    assert.match(subject, /2 spam/);
     assert.match(subject, /1 phishing/);
     assert.match(subject, /1 idioma/);
     assert.match(text, /a@b\.com/);
