@@ -68,18 +68,20 @@ Automático via **Workers Builds** (1 projeto `impressione-me` ligado ao repo):
 
 | Root directory | Build command | Deploy command |
 |---|---|---|
-| `/` (raiz) | `npm run build && npx wrangler d1 migrations apply impressione-contacts --remote` | `npx wrangler deploy` |
+| `/` (raiz) | `npm run build && npx wrangler d1 migrations apply impressione-me-db --remote` | `npx wrangler deploy` |
 
 Preview por PR ativo (`preview_urls: true`). Manual: `npm run deploy`.
 Setup uma vez, fora do deploy:
-1. `wrangler d1 create impressione-contacts` → colar o `database_id` no
-   `wrangler.jsonc` (hoje placeholder); depois
-   `npm run db:migrate` (aplica o DDL).
-2. Preview isolado (para não tocar em produção a partir de PRs):
+1. Nada para o D1 de produção: o primeiro deploy auto-provisiona o banco
+   `impressione-me-db` a partir do binding; o DDL entra pelo `db:migrate`
+   do Build command acima.
+2. Preview isolado é obrigatório (o `wrangler preview` não auto-provisiona):
    `wrangler d1 create impressione-contacts-preview` e
    `wrangler queues create impressione-me-contact-preview` → colar os ids
    no bloco `previews` do `wrangler.jsonc`; depois
    `wrangler d1 migrations apply impressione-contacts-preview --remote`.
+   Sem isso o preview falha em `10021`. (Produção não precisa: o deploy
+   cria o banco sozinho.)
 3. Custom Domains `impressione.me` + `www` no Worker (Terraform, repo infra).
 4. Checar plano do clef-flash: 1 chamada em preview; `403`/erro `5035`
    significa que exige Workers Paid ($5/mês).
