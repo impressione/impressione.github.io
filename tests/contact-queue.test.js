@@ -5,8 +5,10 @@ import { _resetSchemaForTests } from "../workers/app/db.js";
 
 beforeEach(() => _resetSchemaForTests());
 
-function mockEnv({ changes = 1, rowid = 7 } = {}) {
+function mockEnv({ changes = 1, rowid = 7, noRowId = false } = {}) {
   const created = [];
+  const meta = { changes };
+  if (!noRowId) meta.last_row_id = rowid;
   return {
     env: {
       FROM_EMAIL: "contato@impressione.me",
@@ -16,7 +18,7 @@ function mockEnv({ changes = 1, rowid = 7 } = {}) {
         batch: async () => [],
         prepare: () => ({
           bind: () => ({
-            run: async () => ({ meta: { changes, last_row_rowid: rowid } }),
+            run: async () => ({ meta }),
           }),
         }),
       },
@@ -59,6 +61,12 @@ describe("queue consumer (thin: dedupe + workflow.create)", () => {
       { messages: [{ body: { email: "" } }, { body: null }] },
       env,
     );
+    assert.equal(created.length, 0);
+  });
+
+  it("insert without row id (wrong meta key) -> workflow NOT created", async () => {
+    const { env, created } = mockEnv({ noRowId: true });
+    await worker.queue({ messages: [{ body }] }, env);
     assert.equal(created.length, 0);
   });
 });
